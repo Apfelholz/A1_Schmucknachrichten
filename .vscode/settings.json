@@ -3,5 +3,11 @@
     "java.project.outputPath": "bin",
     "java.project.referencedLibraries": [
         "lib/**/*.jar"
-    ]
+    ],
+    "java.test.config": {
+        "name": "JUnit",
+        "workingDirectory": "${workspaceFolder}",
+        "args": []
+    },
+    "java.test.defaultConfig": "JUnit"
 }
