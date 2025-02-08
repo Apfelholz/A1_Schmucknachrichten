@@ -375,4 +375,192 @@ public class FileReaderx {
         
         return boolArray;
     }
+
+    // Read a Part of the File to 2D Arrays
+    public static char[][] readToChar2DArray(String filePath, int startLine, int endLine) {
+        List<char[]> charList = new ArrayList<>();
+        
+        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "UTF-8"))) {
+            
+            // Skip the first lines until the desired start line
+            for (int lineNumber = 0; lineNumber < startLine; lineNumber++) {
+                bufferedReader.readLine();
+            }
+            
+            // Read the file line by line
+            String lineContent;
+            while ((lineContent = bufferedReader.readLine()) != null) {
+                // Convert the line content to a char array and add to the list
+                charList.add(lineContent.toCharArray());
+
+                // Stop reading if the end line is reached
+                if (endLine != -1 && endLine == startLine) {
+                    break;
+                }
+                startLine++;
+            }
+            
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            System.err.println("File does not exist.");
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("Reading failed.");
+        }
+        
+        return charList.toArray(new char[0][]);
+    }
+
+    public static String[][] readToString2DArray(String filePath, int startLine, int endLine) {
+        List<String[]> stringList = new ArrayList<>();
+        
+        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "UTF-8"))) {
+            
+            // Skip the first lines until the desired start line
+            for (int lineNumber = 0; lineNumber < startLine; lineNumber++) {
+                bufferedReader.readLine();
+            }
+            
+            // Read the file line by line
+            String lineContent;
+            while ((lineContent = bufferedReader.readLine()) != null) {
+                // Split the line content by whitespace and add to the list
+                stringList.add(lineContent.split("\\s+"));
+
+                // Stop reading if the end line is reached
+                if (endLine != -1 && endLine == startLine) {
+                    break;
+                }
+                startLine++;
+            }
+            
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            System.err.println("File does not exist.");
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("Reading failed.");
+        }
+        
+        return stringList.toArray(new String[0][]);
+    }
+
+    public static int[][] readToInt2DArray(String filePath, int startLine, int endLine) {
+        List<int[]> intList = new ArrayList<>();
+        
+        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "UTF-8"))) {
+            
+            // Skip the first lines until the desired start line
+            for (int lineNumber = 0; lineNumber < startLine; lineNumber++) {
+                bufferedReader.readLine();
+            }
+            
+            // Read the file line by line
+            String lineContent;
+            while ((lineContent = bufferedReader.readLine()) != null) {
+                // Split the line content by whitespace, convert to integers and add to the list
+                String[] parts = lineContent.split("\\s+");
+                int[] intArray = new int[parts.length];
+                for (int i = 0; i < parts.length; i++) {
+                    intArray[i] = Integer.parseInt(parts[i]);
+                }
+                intList.add(intArray);
+
+                // Stop reading if the end line is reached
+                if (endLine != -1 && endLine == startLine) {
+                    break;
+                }
+                startLine++;
+            }
+            
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            System.err.println("File does not exist.");
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("Reading failed.");
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            System.err.println("Conversion to integer failed.");
+        }
+        
+        return intList.toArray(new int[0][]);
+    }
+
+    public static float[][] readToFloat2DArray(String filePath, int startLine, int endLine) {
+        List<float[]> floatList = new ArrayList<>();
+        
+        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "UTF-8"))) {
+            
+            // Skip the first lines until the desired start line
+            for (int lineNumber = 0; lineNumber < startLine; lineNumber++) {
+                bufferedReader.readLine();
+            }
+            
+            // Read the file line by line
+            String lineContent;
+            while ((lineContent = bufferedReader.readLine()) != null) {
+                // Split the line content by whitespace, convert to floats and add to the list
+                String[] parts = lineContent.split("\\s+");
+                float[] floatArray = new float[parts.length];
+                for (int i = 0; i < parts.length; i++) {
+                    floatArray[i] = Float.parseFloat(parts[i]);
+                }
+                floatList.add(floatArray);
+
+                // Stop reading if the end line is reached
+                if (endLine != -1 && endLine == startLine) {
+                    break;
+                }
+                startLine++;
+            }
+            
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            System.err.println("File does not exist.");
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("Reading failed.");
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            System.err.println("Conversion to float failed.");
+        }
+        
+        return floatList.toArray(new float[0][]);
+    }
+
+public static char[] readToContinuousCharArray(String filePath, int startLine, int endLine) {
+    StringBuilder stringBuilder = new StringBuilder();
+    
+    try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "UTF-8"))) {
+        
+        // Skip the first lines until the desired start line
+        for (int lineNumber = 0; lineNumber < startLine; lineNumber++) {
+            bufferedReader.readLine();
+        }
+        
+        // Read the file line by line
+        String lineContent;
+        while ((lineContent = bufferedReader.readLine()) != null) {
+            // Append the line content to the StringBuilder
+            stringBuilder.append(lineContent);
+            
+            // Stop reading if the end line is reached
+            if (endLine != -1 && endLine == startLine) {
+                break;
+            }
+            startLine++;
+        }
+        
+    } catch (FileNotFoundException e) {
+        e.printStackTrace();
+        System.err.println("File does not exist.");
+    } catch (IOException e) {
+        e.printStackTrace();
+        System.err.println("Reading failed.");
+    }
+    
+    // Convert the StringBuilder to a char array
+    return stringBuilder.toString().toCharArray();
+}
 }
