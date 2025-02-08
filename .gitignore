@@ -1,0 +1,33 @@
+# Ignore all files in the bin directory
+/bin/
+
+# Ignore all compiled class files
+*.class
+
+# Ignore all log files
+*.log
+
+# Ignore IntelliJ IDEA project files
+.idea/
+*.iml
+
+# Ignore Eclipse project files
+.project
+.classpath
+.settings/
+
+# Ignore NetBeans project files
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# Ignore VS Code project files
+.vscode/
+
+# Ignore macOS system files
+.DS_Store
+
+# Ignore Windows system files
+Thumbs.db
