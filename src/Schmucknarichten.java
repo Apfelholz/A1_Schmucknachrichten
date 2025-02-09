@@ -1,6 +1,6 @@
 import java.util.HashMap;
 
-public class App {
+public class Schmucknarichten {
     public static void main(String[] args) throws Exception {
         
         String dateipfad = "data\\schmuck0.txt";
