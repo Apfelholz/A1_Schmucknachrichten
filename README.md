@@ -1,18 +1,44 @@
-## Getting Started
+# A1_Schmucknachrichten
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
+## Projektbeschreibung
+Dieses Projekt ist Teil des Informatik Wettbewerbs BWINF 2024/2025, Runde 2. Die Aufgabe A1_Schmucknachrichten befasst sich mit der Kompression von Nachrichten.
 
-## Folder Structure
+## Verzeichnisstruktur
+```
+/d:/Documents/Programiren/Informatik Wettbewerb/BWINF 2024/Runde 2/A1_Schmucknachrichten/
+│
+├── src/                # Quellcode des Projekts
+├── data/               # Datensätze und Eingabedateien
+├── tests/              # Testfälle und Testskripte
+└── README.md           # Dieses Dokument
+```
 
-The workspace contains two folders by default, where:
+## Installation
+1. Klone das Repository:
+    ```bash
+    git clone <repository-url>
+    ```
+2. Navigiere in das Projektverzeichnis:
+    ```bash
+    cd A1_Schmucknachrichten
+    ```
+3. Installiere die benötigten Abhängigkeiten:
+    ```bash
+    npm install
+    ```
 
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
+## Nutzung
+1. Führe das Hauptskript aus:
+    ```bash
+    npm start
+    ```
+2. Folge den Anweisungen auf der Konsole, um die Nachrichten zu analysieren.
 
-Meanwhile, the compiled output files will be generated in the `bin` folder by default.
+## Tests
+Um die Tests auszuführen, verwende den folgenden Befehl:
+```bash
+npm test
+```
 
-> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
-
-## Dependency Management
-
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
+## Autoren
+- Joanthan Salomo @apfelholz
