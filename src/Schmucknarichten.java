@@ -3,7 +3,7 @@ import java.util.HashMap;
 public class Schmucknarichten {
     public static void main(String[] args) throws Exception {
         
-        String dateipfad = "data\\schmuck0.txt";
+        String dateipfad = "data\\schmuck5.txt";
         
         int numberOfDifferentPearlTypes = FileReaderx.readLineToInt(dateipfad, 0);
 
@@ -11,8 +11,8 @@ public class Schmucknarichten {
 
         char[] message = FileReaderx.readToContinuousCharArray(dateipfad, 2, -1);
 
-        HuffmanKodierung huffmanKodierung = new HuffmanKodierung();
-        HashMap<Character,String> codeMap = huffmanKodierung.huffmanKodierung(message);
+        HuffmanKodierungNonBinary huffmanKodierungnNonBinary = new HuffmanKodierungNonBinary();
+        HashMap<Character,String> codeMap = huffmanKodierungnNonBinary.huffmanKodierung(message, numberOfDifferentPearlTypes);
 
         for (Character key : codeMap.keySet()) {
             System.out.println(key + ": " + codeMap.get(key));
