@@ -27,6 +27,9 @@ public class HuffmanKodierungNonBinary{
             HuffmanNodeNonBinary[] childNodes = new HuffmanNodeNonBinary[numberOfDifferentPearlTypes];
             int newFrequency = 0;
             for(int i = 0; i < numberOfDifferentPearlTypes; i++){
+                if (X.isEmpty()){
+                    break;
+                }
                 childNodes[i] = X.poll();
                 newFrequency += childNodes[i].frequency;
             }
