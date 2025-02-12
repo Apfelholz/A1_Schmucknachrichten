@@ -17,5 +17,12 @@ public class Schmucknarichten {
         for (Character key : codeMap.keySet()) {
             System.out.println(key + ": " + codeMap.get(key));
         }
+
+        String messageCode = "";
+        for (char c : message){
+            messageCode = messageCode + codeMap.get(c);
+        }
+        
+        System.out.println(messageCode);
     }
 }
