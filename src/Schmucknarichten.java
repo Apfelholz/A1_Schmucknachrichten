@@ -1,3 +1,4 @@
+import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -32,6 +33,7 @@ public class Schmucknarichten {
 
         // Verify prefix-free property
         boolean isPrefixFree = verifyPrefixFree(codeMap);
+        boolean isOfAppropriateLength = verifyMessageLength(dateipfad, messageLength);
 
         // Capture the required values
         String shortenedMessageCode = messageCode.length() > 40 ? messageCode.substring(0, 40) + "..." : messageCode;
@@ -44,7 +46,8 @@ public class Schmucknarichten {
         System.out.println("First 40 characters of message: " + shortenedMessage);
         System.out.println("Shortened pearlTypeMap: " + shortenedPearlTypeMap);
         System.out.println("CodeMap: " + codeMapRepresentation);
-        System.out.println("Length of the encoded message: " + messageLength);
+        System.out.println("Length of the encoded message: " + messageLength + " mm");
+        System.out.println("Is of appropiate Length: " + isOfAppropriateLength);
         System.out.println("Is prefix-free: " + isPrefixFree);
     }
 
@@ -58,5 +61,21 @@ public class Schmucknarichten {
             }
         }
         return true;
+    }
+
+    private static boolean verifyMessageLength(String filePath, int messageLength) {
+        boolean isOfAppropriateLength = true;
+
+        String fileName = new File(filePath).getName();
+
+        if (fileName.equals("schmuck0.txt") && messageLength != 113){
+            isOfAppropriateLength = false;
+        }else if (fileName.equals("schmuck5.txt") && messageLength >= 3162){
+            isOfAppropriateLength = false;
+        } else if (fileName.equals("schmuck9.txt") && messageLength >= 36597){
+            isOfAppropriateLength = false;
+        }
+
+        return isOfAppropriateLength;
     }
 }
