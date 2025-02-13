@@ -1,4 +1,6 @@
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Schmucknarichten {
     public static void main(String[] args) throws Exception {
@@ -28,6 +30,9 @@ public class Schmucknarichten {
             messageLength += pearlTypeMap.get(Integer.parseInt(Character.toString(m)));
         }
 
+        // Verify prefix-free property
+        boolean isPrefixFree = verifyPrefixFree(codeMap);
+
         // Capture the required values
         String shortenedMessageCode = messageCode.length() > 40 ? messageCode.substring(0, 40) + "..." : messageCode;
         String shortenedMessage = new String(message).length() > 40 ? new String(message).substring(0, 40) + "..." : new String(message);
@@ -40,5 +45,18 @@ public class Schmucknarichten {
         System.out.println("Shortened pearlTypeMap: " + shortenedPearlTypeMap);
         System.out.println("CodeMap: " + codeMapRepresentation);
         System.out.println("Length of the encoded message: " + messageLength);
+        System.out.println("Is prefix-free: " + isPrefixFree);
+    }
+
+    private static boolean verifyPrefixFree(HashMap<Character, String> codeMap) {
+        Set<String> codes = new HashSet<>(codeMap.values());
+        for (String code : codes) {
+            for (String otherCode : codes) {
+                if (!code.equals(otherCode) && otherCode.startsWith(code)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }
