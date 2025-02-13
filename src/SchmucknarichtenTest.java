@@ -84,8 +84,18 @@ public class SchmucknarichtenTest {
         // Verify the output
         String output = outContent.toString();
         assertFalse(output.isEmpty(), "Output should not be empty for file: " + filePath);
+        String[] lines = output.split("\n");
+        boolean found = false;
+        for (String line : lines) {
+            if (line.startsWith("Is of appropiate Length: true")) {
+                found = true;
+                break;
+            }
+        }
         
         // Use TestResultFormatter to print the file path and the captured output for meaningful test results
         TestResultFormatter.printTestResult(filePath, output);
+        
+        assertTrue(found, "Message is of aproprat Length.");
     }
 }

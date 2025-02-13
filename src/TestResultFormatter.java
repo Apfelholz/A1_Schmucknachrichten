@@ -16,6 +16,7 @@ public class TestResultFormatter {
                 line.startsWith("Shortened pearlTypeMap:") ||
                 line.startsWith("CodeMap:") ||
                 line.startsWith("Length of the encoded message:") ||
+                line.startsWith("Is of appropiate Length: ") ||
                 line.startsWith("Is prefix-free:")) {
                 System.out.println(line);
             }
