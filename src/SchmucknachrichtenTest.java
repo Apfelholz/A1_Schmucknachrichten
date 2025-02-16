@@ -3,7 +3,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
-public class SchmucknarichtenTest {
+public class SchmucknachrichtenTest {
     @Test
     void testMainWithSchmuck0() {
         testMainWithFile("/d:/Documents/Programiren/Informatik Wettbewerb/BWINF 2024/Runde 2/A1_Schmucknachrichten/data/schmuck0.txt");
@@ -21,7 +21,7 @@ public class SchmucknarichtenTest {
 
     @Test
     void testMainWithSchmuck1() {
-        testMainWithFile("/d:/Documents/Programiren/Informatik Wettbewerb/BWINF 2024/Runde 2/A1_Schmucknachrichten/data/schmuck1.txt");
+        testMainWithFile("/d:/Documents/Programiren/Informatik Wettbewerb/BWINF 2024/Runde 2/A1_Schmucknachrichten/data/schmuck1.txt"); 
     }
 
     @Test
@@ -72,7 +72,7 @@ public class SchmucknarichtenTest {
 
         // Call the main method with the input file path
         try {
-            Schmucknarichten.main(new String[]{filePath});
+            Schmucknachrichten.main(new String[]{filePath});
             System.out.println("Test with file " + filePath + " ran successfully.");
         } catch (Exception e) {
             fail("Exception thrown: " + e.getMessage());
