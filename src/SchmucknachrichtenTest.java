@@ -87,7 +87,7 @@ public class SchmucknachrichtenTest {
         String[] lines = output.split("\n");
         boolean found = false;
         for (String line : lines) {
-            if (line.startsWith("Is of appropiate Length: true")) {
+            if (line.startsWith("Is of appropriate Length: true")) {
                 found = true;
                 break;
             }
@@ -96,6 +96,6 @@ public class SchmucknachrichtenTest {
         // Use TestResultFormatter to print the file path and the captured output for meaningful test results
         TestResultFormatter.printTestResult(filePath, output);
         
-        assertTrue(found, "Message is of aproprat Length.");
+        assertTrue(found, "Message is of appropriate Length.");
     }
 }
