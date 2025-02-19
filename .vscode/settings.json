@@ -9,5 +9,6 @@
         "workingDirectory": "${workspaceFolder}",
         "args": []
     },
-    "java.test.defaultConfig": "JUnit"
+    "java.test.defaultConfig": "JUnit",
+    "java.debug.settings.onBuildFailureProceed": true
 }
