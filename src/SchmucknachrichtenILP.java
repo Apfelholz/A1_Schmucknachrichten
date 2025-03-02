@@ -1,4 +1,5 @@
 import java.util.HashMap;
+import java.util.PriorityQueue;
 import java.util.Set;
 
 import com.google.ortools.Loader;
@@ -24,7 +25,7 @@ public class SchmucknachrichtenILP {
         return charTyps;
     }
 
-    public static void findCodes(char[] massage, int numberOfDifferentPearlTypes, int[] pearlTypes) {
+    public static HashMap<Character,String> findCodes(char[] massage, int numberOfDifferentPearlTypes, int[] pearlTypes) {
         Loader.loadNativeLibraries(); // OR-Tools initialisieren
 
         MPSolver solver = new MPSolver("ILP", MPSolver.OptimizationProblemType.CBC_MIXED_INTEGER_PROGRAMMING);
@@ -62,7 +63,11 @@ public class SchmucknachrichtenILP {
         objective.setCoefficient(schmuckLength, 1);
         objective.setMinimization();
 
-        ResultStatus resultStatus = solver.solve();
-         // todo get results to return (in what Form!?)
+        solver.solve();
+         HashMap<Character,String> codeMap = new HashMap<>();
+         for(int i = 0; i < codes.length;i++){
+            codeMap.put(charTypes[i], Double.toString(codes[i].solutionValue()));
+         }
+         return codeMap;
     }
 }
