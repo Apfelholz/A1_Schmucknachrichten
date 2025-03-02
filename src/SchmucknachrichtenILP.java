@@ -1,5 +1,4 @@
 import java.util.HashMap;
-import java.util.PriorityQueue;
 import java.util.Set;
 
 import com.google.ortools.Loader;
@@ -30,7 +29,8 @@ public class SchmucknachrichtenILP {
 
         MPSolver solver = new MPSolver("ILP", MPSolver.OptimizationProblemType.CBC_MIXED_INTEGER_PROGRAMMING);
 
-        // todo finde out waht the first tow values of "makeIntVar" men and set them arcordingly
+        // ! finde out waht the first tow values of "makeIntVar" men and set them arcordingly
+
         char[] charTypes = getCharTypes(massage, numberOfDifferentPearlTypes);
         MPVariable[] codes = new MPVariable[charTypes.length];
         for(int i = 0; i < codes.length; i++){
@@ -47,24 +47,22 @@ public class SchmucknachrichtenILP {
             j = 0;
         }
 
-        // Beispiel-Constraint: x + 2y ≤ 14
-        MPConstraint constraint1 = solver.makeConstraint(Double.NEGATIVE_INFINITY, 14);
-        constraint1.setCoefficient(x, 1);
-        constraint1.setCoefficient(y, 2);
+        MPVariable schmuckLength = solver.makeIntVar(0,0, "schmuckLength");
 
-        // Zielfunktion: Maximiere x + y
+
+        // todo implement the seting of the splitCodes 
+        // todo implement the prefixfree save
+        // todo implement the the setting of the Length
+
+        MPConstraint legthConstrain = solver.makeConstraint(schmuckLength.lb(), schmuckLength.ub());
+
+        // ! find out what the secend value of "setCoefficient" means and set it arordingly
+
         MPObjective objective = solver.objective();
-        objective.setCoefficient(x, 1);
-        objective.setCoefficient(y, 1);
-        objective.setMaximization();
+        objective.setCoefficient(schmuckLength, 1);
+        objective.setMinimization();
 
         ResultStatus resultStatus = solver.solve();
-        if (resultStatus == ResultStatus.OPTIMAL) {
-            System.out.println("Lösung gefunden:");
-            System.out.println("x = " + x.solutionValue());
-            System.out.println("y = " + y.solutionValue());
-        } else {
-            System.out.println("Keine optimale Lösung gefunden.");
-        }
+         // todo get results to return (in what Form!?)
     }
 }
