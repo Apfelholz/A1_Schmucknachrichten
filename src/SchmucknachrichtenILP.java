@@ -3,6 +3,7 @@ import java.util.Set;
 import com.google.ortools.Loader;
 import com.google.ortools.linearsolver.MPSolver;
 import com.google.ortools.linearsolver.MPVariable;
+import com.google.ortools.linearsolver.MPSolver.ResultStatus;
 import com.google.ortools.linearsolver.MPConstraint;
 import com.google.ortools.linearsolver.MPObjective;
 
@@ -91,7 +92,11 @@ public class SchmucknachrichtenILP {
         objective.setCoefficient(schmuckLength, 1);
         objective.setMinimization();
 
-        solver.solve();
+        if (solver.solve() == MPSolver.ResultStatus.OPTIMAL) {
+            System.out.println("optimal!");
+        } else {
+            System.out.println("Kein Ergebnis gefunden.");
+        }
 
         HashMap<Character, String> codeMap = new HashMap<>();
         for (int i = 0; i < codes.length; i++) {
