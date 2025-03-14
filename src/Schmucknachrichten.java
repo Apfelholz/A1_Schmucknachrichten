@@ -55,12 +55,19 @@ public class Schmucknachrichten {
     private static boolean verifyPrefixFree(HashMap<Character, String> codeMap) {
         Set<String> codes = new HashSet<>(codeMap.values());
         for (String code : codes) {
+            boolean f = false;
             for (String otherCode : codes) {
-            if (!code.equals(otherCode) && otherCode.startsWith(code)) {
-                return false;
-            }
+                if (code.equals(otherCode)){
+                    if (f){
+                        return false;
+                    }
+                    f = true;
+                }else if (otherCode.startsWith(code)) {
+                    return false;
+                }
             }
         }
+        
         return true;
         }
 
