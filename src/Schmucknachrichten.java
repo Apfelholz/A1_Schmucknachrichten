@@ -19,8 +19,7 @@ public class Schmucknachrichten {
 
         char[] message = FileReaderx.readToContinuousCharArray(dateipfad, 2, -1);
 
-        SchmucknachrichtenILP schmucknachrichtenILP = new SchmucknachrichtenILP();
-        HashMap<Character,String> codeMap = schmucknachrichtenILP.findCodes(message, numberOfDifferentPearlTypes, pearlTypes);
+        HashMap<Character,String> codeMap = SchmucknachrichtenILP.findCodes(message, numberOfDifferentPearlTypes, pearlTypes);
 
         String messageCode = "";
         int messageLength = 0;
@@ -57,15 +56,15 @@ public class Schmucknachrichten {
         Set<String> codes = new HashSet<>(codeMap.values());
         for (String code : codes) {
             for (String otherCode : codes) {
-                if (!code.equals(otherCode) && otherCode.startsWith(code)) {
-                    return false;
-                }
+            if (!code.equals(otherCode) && otherCode.startsWith(code)) {
+                return false;
+            }
             }
         }
         return true;
-    }
+        }
 
-    private static boolean verifyMessageLength(String filePath, int messageLength) {
+        private static boolean verifyMessageLength(String filePath, int messageLength) {
         boolean isOfAppropriateLength = true;
 
         String fileName = new File(filePath).getName();
@@ -79,9 +78,9 @@ public class Schmucknachrichten {
         }
 
         return isOfAppropriateLength;
-    }
+        }
 
-    private static boolean verifyMessageEncoding(char[] message, String messageCode, HashMap<Character, String> codeMap){
+        private static boolean verifyMessageEncoding(char[] message, String messageCode, HashMap<Character, String> codeMap){
         boolean messageEncodingIsAccurate = false;
 
         String decodeedMassage = "";
