@@ -1,13 +1,10 @@
 import java.util.HashMap;
-import java.util.PriorityQueue;
 import java.util.Set;
 
 import com.google.ortools.Loader;
 import com.google.ortools.linearsolver.MPSolver;
 import com.google.ortools.linearsolver.MPSolver.ResultStatus;
 import com.google.ortools.linearsolver.MPVariable;
-import com.google.ortools.modelbuilder.LinearExpr;
-import com.google.ortools.modelbuilder.LinearExprBuilder;
 import com.google.ortools.linearsolver.MPConstraint;
 import com.google.ortools.linearsolver.MPObjective;
 
@@ -59,6 +56,18 @@ public class SchmucknachrichtenILP {
 
 
         // todo implement the prefixfree save
+
+        for (int i = 0; i < codes.length; i++) {
+            for (int j = 0; j < codes.length; j++) {
+                if (i != j) {
+                    for (int k = 0; k < 10; k++) {
+                        MPConstraint constraint = solver.makeConstraint(0, 0, "Inequality_Constraint_" + i + "_" + j + "_" + k);
+                        constraint.setCoefficient(splitCodes[i][k], 1);
+                        constraint.setCoefficient(splitCodes[j][k], -1);
+                    }
+                }
+            }
+        }
         // todo implement the the setting of the Length
 
         MPConstraint legthConstrain = solver.makeConstraint(schmuckLength.lb(), schmuckLength.ub());
