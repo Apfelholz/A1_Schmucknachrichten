@@ -19,8 +19,8 @@ public class Schmucknachrichten {
 
         char[] message = FileReaderx.readToContinuousCharArray(dateipfad, 2, -1);
 
-        HuffmanKodierungNonBinary huffmanKodierungnNonBinary = new HuffmanKodierungNonBinary();
-        HashMap<Character,String> codeMap = huffmanKodierungnNonBinary.huffmanKodierung(message, numberOfDifferentPearlTypes);
+        SchmucknachrichtenILP schmucknachrichtenILP = new SchmucknachrichtenILP();
+        HashMap<Character,String> codeMap = schmucknachrichtenILP.findCodes(message, numberOfDifferentPearlTypes, pearlTypes);
 
         String messageCode = "";
         int messageLength = 0;
