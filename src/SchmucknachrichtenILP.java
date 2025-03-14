@@ -1,29 +1,20 @@
 import java.util.HashMap;
-import java.util.Set;
 import com.google.ortools.Loader;
 import com.google.ortools.linearsolver.MPSolver;
 import com.google.ortools.linearsolver.MPVariable;
-import com.google.ortools.linearsolver.MPSolver.ResultStatus;
 import com.google.ortools.linearsolver.MPConstraint;
 import com.google.ortools.linearsolver.MPObjective;
 
 public class SchmucknachrichtenILP {
 
-    private static char[] getCharTypes(char[] message, int numberOfDifferentPearlTypes) {
+    private static HashMap<Character, Integer> getCharTypesWithFrequency(char[] message) {
         HashMap<Character, Integer> frequencyMap = new HashMap<>();
 
         for (char c : message) {
             frequencyMap.put(c, frequencyMap.getOrDefault(c, 0) + 1);
         }
 
-        Set<Character> charTypSet = frequencyMap.keySet();
-        // Konvertiere das Set in ein Array von chars
-        char[] charTypes = new char[charTypSet.size()];
-        int i = 0;
-        for (Character c : charTypSet) {
-            charTypes[i++] = c;
-        }
-        return charTypes;
+        return frequencyMap;
     }
 
     public static HashMap<Character, String> findCodes(char[] massage, int numberOfDifferentPearlTypes, int[] pearlTypes) {
@@ -31,7 +22,18 @@ public class SchmucknachrichtenILP {
 
         MPSolver solver = new MPSolver("ILP", MPSolver.OptimizationProblemType.CBC_MIXED_INTEGER_PROGRAMMING);
 
-        char[] charTypes = getCharTypes(massage, numberOfDifferentPearlTypes);
+        HashMap<Character, Integer> charFrequencyMap = getCharTypesWithFrequency(massage);
+        char[] charTypes = new char[charFrequencyMap.size()];
+        int[] charfrequency = new int[charFrequencyMap.size()];
+        int idx = 0;
+        for (int freq : charFrequencyMap.values()) {
+            charfrequency[idx++] = freq;
+        }
+        int index = 0;
+        for (Character c : charFrequencyMap.keySet()) {
+            charTypes[index++] = c;
+        }
+
         MPVariable[] codes = new MPVariable[charTypes.length];
         for (int i = 0; i < codes.length; i++) {
             codes[i] = solver.makeIntVar(0, Integer.MAX_VALUE, Character.toString(charTypes[i]));
@@ -70,11 +72,9 @@ public class SchmucknachrichtenILP {
         // Implementiere das Setzen der Länge
         MPConstraint lengthConstraint = solver.makeConstraint(0, Integer.MAX_VALUE, "Length_Constraint");
 
-        // Addiere die Länge jedes Code-Kombinationswertes zu der Gesamtlänge
         for (int i = 0; i < codes.length; i++) {
             for (int j = 0; j < 10; j++) {
-                // Verwende den Index von splitCodes[i][j], um die Perlengröße aus pearlTypes zu holen
-                lengthConstraint.setCoefficient(splitCodes[i][j], pearlTypes[(int) splitCodes[i][j].solutionValue()]);
+                lengthConstraint.setCoefficient(splitCodes[i][j], pearlTypes[(int) splitCodes[i][j].solutionValue()]*charfrequency[i]);
             }
         }
 
@@ -103,6 +103,6 @@ public class SchmucknachrichtenILP {
             codeMap.put(charTypes[i], Integer.toString((int) codes[i].solutionValue()));
         }
 
-        return codeMap;
+         return codeMap;
     }
 }
