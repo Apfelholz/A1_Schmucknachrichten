@@ -30,19 +30,17 @@ public class SchmucknachrichtenILP {
 
         MPSolver solver = new MPSolver("ILP", MPSolver.OptimizationProblemType.CBC_MIXED_INTEGER_PROGRAMMING);
 
-        // ! finde out waht the first tow values of "makeIntVar" men and set them arcordingly
-
         char[] charTypes = getCharTypes(massage, numberOfDifferentPearlTypes);
         MPVariable[] codes = new MPVariable[charTypes.length];
         for(int i = 0; i < codes.length; i++){
-            codes[i] = solver.makeIntVar(0, 0, Character.toString(charTypes[i]));
+            codes[i] = solver.makeIntVar(0, Integer.MAX_VALUE, Character.toString(charTypes[i]));
         }
 
         MPVariable[][] splitCodes = new MPVariable[codes.length][10];
         for(int i = 0; i < codes.length; i++){
             int j = 0;
             for(MPVariable codeDigit : splitCodes[i]){
-                codeDigit = solver.makeIntVar(0, 0, Character.toString(charTypes[i]) + Integer.toString(j));
+                codeDigit = solver.makeIntVar(0, 9, Character.toString(charTypes[i]) + Integer.toString(j));
                 j++;
             }
             j = 0;
