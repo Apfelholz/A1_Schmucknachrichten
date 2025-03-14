@@ -37,19 +37,19 @@ public class SchmucknachrichtenILP {
         }
 
         MPVariable[][] splitCodes = new MPVariable[codes.length][10];
-        for(int i = 0; i < codes.length; i++){
-            int j = 0;
-            for(MPVariable codeDigit : splitCodes[i]){
-                codeDigit = solver.makeIntVar(0, 9, Character.toString(charTypes[i]) + Integer.toString(j));
-                j++;
+        for (int i = 0; i < codes.length; i++) {
+            for (int j = 0; j < 10; j++) {
+                splitCodes[i][j] = solver.makeIntVar(0, 9, Character.toString(charTypes[i]) + Integer.toString(j));
             }
-            j = 0;
         }
 
         MPVariable schmuckLength = solver.makeIntVar(0,0, "schmuckLength");
 
 
         // todo implement the seting of the splitCodes 
+
+
+
         // todo implement the prefixfree save
         // todo implement the the setting of the Length
 
