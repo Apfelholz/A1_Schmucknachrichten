@@ -18,7 +18,7 @@ public class SchmucknachrichtenILP {
     }
 
     public static HashMap<Character, String> findCodes(char[] massage, int numberOfDifferentPearlTypes, int[] pearlTypes) {
-        Loader.loadNativeLibraries(); // OR-Tools initialisieren
+        Loader.loadNativeLibraries();
 
         MPSolver solver = new MPSolver("ILP", MPSolver.OptimizationProblemType.CBC_MIXED_INTEGER_PROGRAMMING);
 
@@ -96,6 +96,30 @@ public class SchmucknachrichtenILP {
             System.out.println("optimal!");
         } else {
             System.out.println("Kein Ergebnis gefunden.");
+        }
+
+        // Schreibe die Lösungen aller Variablen in Arrays
+        int[] codeValues = new int[codes.length];
+        int[][] splitCodeValues = new int[codes.length][10];
+
+        for (int i = 0; i < codes.length; i++) {
+            codeValues[i] = (int) codes[i].solutionValue();
+            for (int j = 0; j < 10; j++) {
+            splitCodeValues[i][j] = (int) splitCodes[i][j].solutionValue();
+            }
+        }
+
+        // Optional: Ausgabe der Werte zur Überprüfung
+        System.out.println("Code Values:");
+        for (int value : codeValues) {
+            System.out.print(value + " ");
+        }
+        System.out.println("\nSplit Code Values:");
+        for (int i = 0; i < splitCodeValues.length; i++) {
+            for (int j = 0; j < splitCodeValues[i].length; j++) {
+            System.out.print(splitCodeValues[i][j] + " ");
+            }
+            System.out.println();
         }
 
         HashMap<Character, String> codeMap = new HashMap<>();
