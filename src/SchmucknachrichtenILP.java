@@ -2,7 +2,6 @@ import java.util.HashMap;
 import java.util.Set;
 import com.google.ortools.Loader;
 import com.google.ortools.linearsolver.MPSolver;
-import com.google.ortools.linearsolver.MPSolver.ResultStatus;
 import com.google.ortools.linearsolver.MPVariable;
 import com.google.ortools.linearsolver.MPConstraint;
 import com.google.ortools.linearsolver.MPObjective;
@@ -74,7 +73,16 @@ public class SchmucknachrichtenILP {
         for (int i = 0; i < codes.length; i++) {
             for (int j = 0; j < 10; j++) {
                 // Verwende den Index von splitCodes[i][j], um die Perlengröße aus pearlTypes zu holen
-                lengthConstraint.setCoefficient(splitCodes[i][j], pearlTypes[splitCodes[i][j].index()]);
+                lengthConstraint.setCoefficient(splitCodes[i][j], pearlTypes[(int) splitCodes[i][j].solutionValue()]);
+            }
+        }
+
+        // Bedingung, um sicherzustellen, dass jeder Code einzigartig ist
+        for (int i = 0; i < codes.length; i++) {
+            for (int j = i + 1; j < codes.length; j++) {
+                MPConstraint uniqueConstraint = solver.makeConstraint(1, Double.POSITIVE_INFINITY, "Unique_Constraint_" + i + "_" + j);
+                uniqueConstraint.setCoefficient(codes[i], 1);
+                uniqueConstraint.setCoefficient(codes[j], -1);
             }
         }
 
@@ -87,7 +95,7 @@ public class SchmucknachrichtenILP {
 
         HashMap<Character, String> codeMap = new HashMap<>();
         for (int i = 0; i < codes.length; i++) {
-            codeMap.put(charTypes[i], Double.toString(codes[i].solutionValue()));
+            codeMap.put(charTypes[i], Integer.toString((int) codes[i].solutionValue()));
         }
 
         return codeMap;
