@@ -6,6 +6,8 @@ import com.google.ortools.Loader;
 import com.google.ortools.linearsolver.MPSolver;
 import com.google.ortools.linearsolver.MPSolver.ResultStatus;
 import com.google.ortools.linearsolver.MPVariable;
+import com.google.ortools.modelbuilder.LinearExpr;
+import com.google.ortools.modelbuilder.LinearExprBuilder;
 import com.google.ortools.linearsolver.MPConstraint;
 import com.google.ortools.linearsolver.MPObjective;
 
@@ -45,9 +47,15 @@ public class SchmucknachrichtenILP {
 
         MPVariable schmuckLength = solver.makeIntVar(0,0, "schmuckLength");
 
+        // implement the seting of the splitCodes 
 
-        // todo implement the seting of the splitCodes 
-
+        for (int i = 0; i < codes.length; i++) {
+            MPConstraint constraint = solver.makeConstraint(codes[i].lb(), codes[i].ub(), "Split_Constraint_" + i);
+        
+            for (int j = 0; j < 10; j++) {
+                constraint.setCoefficient(splitCodes[i][j], Math.pow(10, 9 - j));
+            }
+        }
 
 
         // todo implement the prefixfree save
