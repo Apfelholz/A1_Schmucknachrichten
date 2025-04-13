@@ -2,9 +2,9 @@ import java.util.HashMap;
 import java.util.PriorityQueue;
 
 public class HuffmanKodierungNonBinary{
-    private HashMap<Character,String> codeMap = new HashMap<>();
+    private static HashMap<Character,String> codeMap = new HashMap<>();
 
-    private PriorityQueue<HuffmanNodeNonBinary> initaiseQueueWithRelativefrequence(char[] message, int numberOfDifferentPearlTypes){
+    private static PriorityQueue<HuffmanNodeNonBinary> initaiseQueueWithRelativefrequence(char[] message, int numberOfDifferentPearlTypes){
         PriorityQueue<HuffmanNodeNonBinary> X = new PriorityQueue<HuffmanNodeNonBinary>((a,b) -> a.frequency - b.frequency);
 
         HashMap<Character, Integer> frequencyMap = new HashMap<>();
@@ -20,8 +20,8 @@ public class HuffmanKodierungNonBinary{
         return X;
     }
 
-    public HashMap<Character,String> huffmanKodierung(char[] message, int numberOfDifferentPearlTypes){
-        PriorityQueue<HuffmanNodeNonBinary> X = this.initaiseQueueWithRelativefrequence(message, numberOfDifferentPearlTypes);
+    public static HashMap<Character,String> huffmanKodierung(char[] message, int numberOfDifferentPearlTypes){
+        PriorityQueue<HuffmanNodeNonBinary> X = initaiseQueueWithRelativefrequence(message, numberOfDifferentPearlTypes);
 
         while(X.size() > 1){
             HuffmanNodeNonBinary[] childNodes = new HuffmanNodeNonBinary[numberOfDifferentPearlTypes];
@@ -40,12 +40,12 @@ public class HuffmanKodierungNonBinary{
 
         HuffmanNodeNonBinary root = X.poll();
         root.data = '*';
-        this.getcodes(root);
+        getcodes(root);
 
         return codeMap;
     }
 
-    private void getcodes(HuffmanNodeNonBinary node){
+    private static void getcodes(HuffmanNodeNonBinary node){
         if(node.data != '$' && node.data != '*'){
             codeMap.put(node.data, node.code);
         } else if(node.data == '*'){
@@ -53,7 +53,7 @@ public class HuffmanKodierungNonBinary{
             for(HuffmanNodeNonBinary c : node.childNodes){
                 if(c != null){
                     c.code = Integer.toString(i);
-                    this.getcodes(c);
+                    getcodes(c);
                 }
                 i++;
             }        
@@ -62,7 +62,7 @@ public class HuffmanKodierungNonBinary{
             for(HuffmanNodeNonBinary c : node.childNodes){
                 if(c != null){
                     c.code = node.code + Integer.toString(i);
-                    this.getcodes(c);
+                    getcodes(c);
                 }
                 i++;
             }

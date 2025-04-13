@@ -4,67 +4,132 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
 public class SchmucknachrichtenTest {
+
+    // test with ILP
+
     @Test
-    void testMainWithSchmuck0() {
-        testMainWithFile("./data/schmuck0.txt");
+    void testMainWithSchmuckILP0() {
+        testMainWithFile("./data/schmuck0.txt", "ILP");
     }
 
     @Test
-    void testMainWithSchmuck00() {
-        testMainWithFile("./data/schmuck00.txt");
+    void testMainWithSchmuckILP00() {
+        testMainWithFile("./data/schmuck00.txt", "ILP");
     }
 
     @Test
-    void testMainWithSchmuck01() {
-        testMainWithFile("./data/schmuck01.txt");
+    void testMainWithSchmuckILP01() {
+        testMainWithFile("./data/schmuck01.txt", "ILP");
     }
 
     @Test
-    void testMainWithSchmuck1() {
-        testMainWithFile("./data/schmuck1.txt"); 
+    void testMainWithSchmuckILP1() {
+        testMainWithFile("./data/schmuck1.txt", "ILP"); 
     }
 
     @Test
-    void testMainWithSchmuck2() {
-        testMainWithFile("./data/schmuck2.txt");
+    void testMainWithSchmuckILP2() {
+        testMainWithFile("./data/schmuck2.txt", "ILP");
     }
 
     @Test
-    void testMainWithSchmuck3() {
-        testMainWithFile("./data/schmuck3.txt");
+    void testMainWithSchmuckILP3() {
+        testMainWithFile("./data/schmuck3.txt", "ILP");
     }
 
     @Test
-    void testMainWithSchmuck4() {
-        testMainWithFile("./data/schmuck4.txt");
+    void testMainWithSchmuckILP4() {
+        testMainWithFile("./data/schmuck4.txt", "ILP");
     }
 
     @Test
-    void testMainWithSchmuck5() {
-        testMainWithFile("./data/schmuck5.txt");
+    void testMainWithSchmuckILP5() {
+        testMainWithFile("./data/schmuck5.txt", "ILP");
     }
 
     @Test
-    void testMainWithSchmuck6() {
-        testMainWithFile("./data/schmuck6.txt");
+    void testMainWithSchmuckILP6() {
+        testMainWithFile("./data/schmuck6.txt", "ILP");
     }
 
     @Test
-    void testMainWithSchmuck7() {
-        testMainWithFile("./data/schmuck7.txt");
+    void testMainWithSchmuckILP7() {
+        testMainWithFile("./data/schmuck7.txt", "ILP");
     }
 
     @Test
-    void testMainWithSchmuck8() {
-        testMainWithFile("./data/schmuck8.txt");
+    void testMainWithSchmuckILP8() {
+        testMainWithFile("./data/schmuck8.txt", "ILP");
     }
 
     @Test
-    void testMainWithSchmuck9() {
-        testMainWithFile("./data/schmuck9.txt");
+    void testMainWithSchmuckILP9() {
+        testMainWithFile("./data/schmuck9.txt", "ILP");
+    }
+
+    // test with Huffman
+
+    @Test
+    void testMainWithSchmuckHuffman0() {
+        testMainWithFile("./data/schmuck0.txt", "Huffman");
+    }
+
+    @Test
+    void testMainWithSchmuckHuffman00() {
+        testMainWithFile("./data/schmuck00.txt", "Huffman");
+    }
+
+    @Test
+    void testMainWithSchmuckHuffman01() {
+        testMainWithFile("./data/schmuck01.txt", "Huffman");
+    }
+
+    @Test
+    void testMainWithSchmuckHuffman1() {
+        testMainWithFile("./data/schmuck1.txt", "Huffman"); 
+    }
+
+    @Test
+    void testMainWithSchmuckHuffman2() {
+        testMainWithFile("./data/schmuck2.txt", "Huffman");
+    }
+
+    @Test
+    void testMainWithSchmuckHuffman3() {
+        testMainWithFile("./data/schmuck3.txt", "Huffman");
+    }
+
+    @Test
+    void testMainWithSchmuckHuffman4() {
+        testMainWithFile("./data/schmuck4.txt", "Huffman");
+    }
+
+    @Test
+    void testMainWithSchmuckHuffman5() {
+        testMainWithFile("./data/schmuck5.txt", "Huffman");
+    }
+
+    @Test
+    void testMainWithSchmuckHuffman6() {
+        testMainWithFile("./data/schmuck6.txt", "Huffman");
+    }
+
+    @Test
+    void testMainWithSchmuckHuffman7() {
+        testMainWithFile("./data/schmuck7.txt", "Huffman");
+    }
+
+    @Test
+    void testMainWithSchmuckHuffman8() {
+        testMainWithFile("./data/schmuck8.txt", "Huffman");
+    }
+
+    @Test
+    void testMainWithSchmuckHuffman9() {
+        testMainWithFile("./data/schmuck9.txt", "Huffman");
     }
     
-    private void testMainWithFile(String filePath) {
+    private void testMainWithFile(String filePath, String method) {
         // Redirect System.out to capture the output
         ByteArrayOutputStream outContent = new ByteArrayOutputStream();
         PrintStream originalOut = System.out;
@@ -72,7 +137,7 @@ public class SchmucknachrichtenTest {
 
         // Call the main method with the input file path
         try {
-            Schmucknachrichten.main(new String[]{filePath});
+            Schmucknachrichten.main(new String[]{filePath, method});
             System.out.println("Test with file " + filePath + " ran successfully.");
         } catch (Exception e) {
             fail("Exception thrown: " + e.getMessage());

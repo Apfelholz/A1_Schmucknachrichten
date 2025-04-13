@@ -7,6 +7,7 @@ public class Schmucknachrichten {
     public static void main(String[] args) throws Exception {
         
         String dateipfad = args[0];
+        String method = args[1];
         
         int numberOfDifferentPearlTypes = FileReaderx.readLineToInt(dateipfad, 0);
 
@@ -19,7 +20,14 @@ public class Schmucknachrichten {
 
         char[] message = FileReaderx.readToContinuousCharArray(dateipfad, 2, -1);
 
-        HashMap<Character,String> codeMap = SchmucknachrichtenILP.findCodes(message, numberOfDifferentPearlTypes, pearlTypes);
+        HashMap<Character,String> codeMap = new HashMap<>();
+
+        if (method.equals("ILP")){
+            codeMap = SchmucknachrichtenILP.findCodes(message, numberOfDifferentPearlTypes, pearlTypes);
+        }else if(method.equals("Huffman")){
+            codeMap = HuffmanKodierungNonBinary.huffmanKodierung(message, numberOfDifferentPearlTypes);
+        }
+        
 
         String messageCode = "";
         int messageLength = 0;
