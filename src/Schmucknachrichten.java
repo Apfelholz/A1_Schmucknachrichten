@@ -1,6 +1,7 @@
 import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class Schmucknachrichten {
@@ -22,12 +23,12 @@ public class Schmucknachrichten {
         char[] message = FileReaderx.readToContinuousCharArray(dateipfad, 2, -1);
 
         // Create code map
-        HashMap<Character, String> codeMap = new HashMap<>();
+        Map<Character, String> codeMap = new HashMap<>();
         if (method.equals("ILP")) {
-            codeMap = SchmucknachrichtenILP.findCodes(message, numberOfDifferentPearlTypes, pearlTypes);
+            codeMap = UnequalCostPrefixFreeCode.findOptimalPrefixFreeCode(message, pearlTypes);
         } else if (method.equals("Huffman")) {
             codeMap = HuffmanKodierungNonBinary.huffmanKodierung(message, numberOfDifferentPearlTypes);
-        }
+        } 
 
         // Encode message
         StringBuilder messageCodeBuilder = new StringBuilder();
@@ -64,7 +65,7 @@ public class Schmucknachrichten {
     }
 
     // Checks if the code map is prefix-free
-    private static boolean verifyPrefixFree(HashMap<Character, String> codeMap) {
+    private static boolean verifyPrefixFree(Map<Character, String> codeMap) {
         Set<String> codes = new HashSet<>(codeMap.values());
         for (String code : codes) {
             boolean found = false;
@@ -98,7 +99,7 @@ public class Schmucknachrichten {
     }
 
     // Checks if the message was encoded correctly
-    private static boolean verifyMessageEncoding(char[] message, String messageCode, HashMap<Character, String> codeMap) {
+    private static boolean verifyMessageEncoding(char[] message, String messageCode, Map<Character, String> codeMap) {
         StringBuilder decodedMessageBuilder = new StringBuilder();
         StringBuilder currentCode = new StringBuilder();
 
@@ -114,7 +115,7 @@ public class Schmucknachrichten {
     }
 
     // Find key by value in the map
-    private static Character getKeyByValue(HashMap<Character, String> map, String value) {
+    private static Character getKeyByValue(Map<Character, String> map, String value) {
         for (HashMap.Entry<Character, String> entry : map.entrySet()) {
             if (entry.getValue().equals(value)) {
                 return entry.getKey();

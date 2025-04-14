@@ -61,7 +61,21 @@ public class SchmucknachrichtenILP {
             constraint.setCoefficient(codes[c], -1);
         }
 
-        
+        for (int c = 0; c < codes.length; c++){
+            for (int ca = 0; ca < codes.length; ca++){
+                if(c != ca){
+                    for(int i = 0; i < 10; i++){
+                        MPConstraint constraint = solver.makeConstraint(-Integer.MAX_VALUE,-1);
+                        for (int j = 0; j <= i; j++){
+                            constraint.setCoefficient(splitCodes[c][j], -Math.pow(10, i - j));
+                            constraint.setCoefficient(splitCodes[ca][j], Math.pow(10, i - j));
+                        }
+                    }
+                }
+            }
+        }
+
+
     
         MPObjective objective = solver.objective();
         objective.setCoefficient(codes[0], 1);  // Maximierung von codes[0] oder eine andere Variable
