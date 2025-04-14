@@ -34,13 +34,5 @@ public class SIG {
     public int hashCode() {
         return Objects.hash(m, Arrays.hashCode(levels));
     }
-
-    @Override
-    public String toString() {
-        return "Signature{" +
-                "m=" + m +
-                ", levels=" + Arrays.toString(levels) +
-                '}';
-    }
  
 }

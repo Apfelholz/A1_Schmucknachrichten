@@ -4,8 +4,8 @@ public class UnequalCostPrefixFreeCode {
 
     private static float[] getfrequency(char[] message) {
         Map<Character, Integer> frequencyMap = new HashMap<>();
-        for (char ch : message) {
-            frequencyMap.put(ch, frequencyMap.getOrDefault(ch, 0) + 1);
+        for (char c : message) {
+            frequencyMap.put(c, frequencyMap.getOrDefault(c, 0) + 1);
         }
 
         float[] frequencies = new float[frequencyMap.size()];
@@ -19,6 +19,23 @@ public class UnequalCostPrefixFreeCode {
         return frequencies;
     }
 
+    private static char[] getAlphabet(char[] message) {
+        Map<Character, Integer> frequencyMap = new HashMap<>();
+        for (char c : message) {
+            frequencyMap.put(c, frequencyMap.getOrDefault(c, 0) + 1);
+        }
+
+        char[] alphabet = new char[frequencyMap.size()];
+        int index = 0;
+
+
+        for (char c : frequencyMap.keySet()) {
+            alphabet[index++] = c;
+        }
+
+        return alphabet;
+    }
+
     private static int[] getdeph(int[] cost){
         int maxCost = Arrays.stream(cost).max().orElse(0);
         int[] deph = new int[maxCost];
@@ -28,29 +45,23 @@ public class UnequalCostPrefixFreeCode {
         return deph;
     }
 
-    private static char[] getAlphabet(char[] message) {
-        Set<Character> set = new LinkedHashSet<>();
-        for (char c : message) {
-            set.add(c);
+    private static void sortByProbabilityDescending(float[] p, char[] symbols) {
+        List<Map.Entry<Character, Float>> pairs = new ArrayList<>();
+        for (int i = 0; i < p.length; i++) {
+            pairs.add(new AbstractMap.SimpleEntry<>(symbols[i], p[i]));
         }
+        pairs.sort((a, b) -> Float.compare(b.getValue(), a.getValue()));
     
-        char[] alphabet = new char[set.size()];
-        int i = 0;
-        for (char c : set) {
-            alphabet[i++] = c;
+        for (int i = 0; i < p.length; i++) {
+            symbols[i] = pairs.get(i).getKey();
+            p[i] = pairs.get(i).getValue();
         }
-
-        return alphabet;
     }
 
-    private static Map<Character, String> getCodeMap(SIG lastSIG, int[] letterCosts, char[] symbols, float[] frequencies) {
+    private static Map<Character, String> getCodeMap(SIG lastSIG, int[] letterCosts, char[] symbols) {
         Map<Character, String> codeMap = new HashMap<>();
 
-        // Create a priority queue to sort symbols by their frequencies in descending order
-        PriorityQueue<Character> sortedSymbols = new PriorityQueue<>((a, b) -> 
-            Float.compare(frequencies[symbols.length - 1 - new String(symbols).indexOf(b)], 
-                  frequencies[symbols.length - 1 - new String(symbols).indexOf(a)]));
-        
+        Queue<Character> sortedSymbols = new LinkedList<>();
         for (char symbol : symbols) {
             sortedSymbols.add(symbol);
         }
@@ -110,6 +121,9 @@ public class UnequalCostPrefixFreeCode {
 
         float[] p = getfrequency(message);
 
+        char[] symbols = getAlphabet(message);
+        sortByProbabilityDescending(p, symbols);
+
         int n = p.length;
 
         int[] d = getdeph(c);
@@ -131,10 +145,8 @@ public class UnequalCostPrefixFreeCode {
             akkSIG = queue.poll();
 
             int additonalCost = 0; 
-            for (int t = akkSIG.getM()+1; t <= n; t++){
-                if(t < n-1){
-                    additonalCost += p[t];
-                }
+            for (int t = akkSIG.getM(); t < n; t++) {
+                additonalCost += p[t];
             }
 
             int newcost = OPT.getOrDefault(akkSIG, Integer.MAX_VALUE) + additonalCost;
@@ -173,6 +185,6 @@ public class UnequalCostPrefixFreeCode {
             }
         }
 
-        return getCodeMap(perfektSIG, c, getAlphabet(message), p);
+        return getCodeMap(perfektSIG, c, symbols);
     }
 }  
