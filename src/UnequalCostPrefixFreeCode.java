@@ -109,7 +109,9 @@ public class UnequalCostPrefixFreeCode {
 
             for (int j = q; j < lastl1; j++) {
                 Node leaf = nodes.poll();
-                codeMap.put(sortedSymbols.poll(), leaf.code);
+                if(sortedSymbols.size() > 0){
+                    codeMap.put(sortedSymbols.poll(), leaf.code);
+                }
             }
         }
     
