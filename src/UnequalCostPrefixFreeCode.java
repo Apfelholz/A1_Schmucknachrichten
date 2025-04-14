@@ -82,15 +82,18 @@ public class UnequalCostPrefixFreeCode {
     
         class Node {
             String code;
-            Node(String code) {
+            int deph;
+            Node(String code, int deph) {
                 this.code = code;
+                this.deph = deph;
             }
         }
     
-        Queue<Node> nodes = new LinkedList<>();
+        //Queue<Node> nodes = new LinkedList<>();
+        Queue<Node> nodes = new PriorityQueue<>((a, b) -> Integer.compare(a.deph, b.deph));
 
         for (int k = 0; k < r; k++) {
-            Node child = new Node(alphabet[k]);
+            Node child = new Node(alphabet[k], letterCosts[k]);
             nodes.add(child);
         }
 
@@ -102,7 +105,7 @@ public class UnequalCostPrefixFreeCode {
             for (int j = 0; j < q; j++) {
                 Node parent = nodes.poll();
                 for (int k = 0; k < r; k++) {
-                    Node child = new Node(parent.code + alphabet[k]);
+                    Node child = new Node(parent.code + alphabet[k], parent.deph + letterCosts[k]);
                     nodes.add(child);
                 }
             }
@@ -176,7 +179,7 @@ public class UnequalCostPrefixFreeCode {
                     queue.add(newSIG);
                 }
 
-                if (newSIG.getM() >= n) {
+                if (newSIG.getM() >= n) { //*(c.length-1)
                     perfektSIG = newSIG;
                     break;
                 }
