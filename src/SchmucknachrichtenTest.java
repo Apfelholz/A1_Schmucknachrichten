@@ -8,6 +8,11 @@ public class SchmucknachrichtenTest {
     // test with ILP
 
     @Test
+    void testMainWithSchmuckILPA() {
+        testMainWithFile("./data/schmuckA.txt", "ILP");
+    }
+
+    @Test
     void testMainWithSchmuckILP0() {
         testMainWithFile("./data/schmuck0.txt", "ILP");
     }
@@ -68,6 +73,11 @@ public class SchmucknachrichtenTest {
     }
 
     // test with Huffman
+
+    @Test
+    void testMainWithSchmuckHuffmanA() {
+        testMainWithFile("./data/schmuckA.txt", "Huffman");
+    }
 
     @Test
     void testMainWithSchmuckHuffman0() {
