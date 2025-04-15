@@ -173,7 +173,10 @@ public class UnequalCostPrefixFreeCode {
 
         int minCost = Integer.MAX_VALUE;
         for (SIG sig : perfectSIGs) {
-            calculateMessageCost(message, costs, symbols, sig, minCost);
+            int cost =  calculateMessageCost(message, costs, symbols, sig, minCost);
+            if (cost < minCost){
+                minCost = cost;
+            }
         }
 
         return encodeMap;
