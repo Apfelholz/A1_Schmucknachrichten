@@ -1,9 +1,9 @@
 import java.util.*;
 
 public class UnequalCostPrefixFreeCode {
-    static Map<Character, String> endcodeMap;
+    static Map<Character, String> encodeMap;
 
-    private static float[] getfrequency(char[] message) {
+    private static float[] calculateFrequencies(char[] message) {
         Map<Character, Integer> frequencyMap = new HashMap<>();
         for (char c : message) {
             frequencyMap.put(c, frequencyMap.getOrDefault(c, 0) + 1);
@@ -20,256 +20,220 @@ public class UnequalCostPrefixFreeCode {
         return frequencies;
     }
 
-    private static char[] getAlphabet(char[] message) {
-        Map<Character, Integer> frequencyMap = new HashMap<>();
+    private static char[] extractAlphabet(char[] message) {
+        Set<Character> uniqueChars = new HashSet<>();
         for (char c : message) {
-            frequencyMap.put(c, frequencyMap.getOrDefault(c, 0) + 1);
+            uniqueChars.add(c);
         }
 
-        char[] alphabet = new char[frequencyMap.size()];
+        char[] alphabet = new char[uniqueChars.size()];
         int index = 0;
-
-
-        for (char c : frequencyMap.keySet()) {
+        for (char c : uniqueChars) {
             alphabet[index++] = c;
         }
 
         return alphabet;
     }
 
-    private static int[] getdeph(int[] cost){
-        int maxCost = Arrays.stream(cost).max().orElse(0);
-        int[] deph = new int[maxCost];
-        for (int i = 0; i < cost.length; i++) {
-            deph[cost[i]-1]++;
+    private static int[] calculateDepths(int[] costs) {
+        int maxCost = Arrays.stream(costs).max().orElse(0);
+        int[] depths = new int[maxCost];
+        for (int cost : costs) {
+            depths[cost - 1]++;
         }
-        return deph;
+        return depths;
     }
 
-    private static void sortByProbabilityDescending(float[] p, char[] symbols) {
+    private static void sortSymbolsByProbability(float[] probabilities, char[] symbols) {
         List<Map.Entry<Character, Float>> pairs = new ArrayList<>();
-        for (int i = 0; i < p.length; i++) {
-            pairs.add(new AbstractMap.SimpleEntry<>(symbols[i], p[i]));
+        for (int i = 0; i < probabilities.length; i++) {
+            pairs.add(new AbstractMap.SimpleEntry<>(symbols[i], probabilities[i]));
         }
         pairs.sort((a, b) -> Float.compare(b.getValue(), a.getValue()));
-    
-        for (int i = 0; i < p.length; i++) {
+
+        for (int i = 0; i < probabilities.length; i++) {
             symbols[i] = pairs.get(i).getKey();
-            p[i] = pairs.get(i).getValue();
+            probabilities[i] = pairs.get(i).getValue();
         }
     }
 
-    private static Map<Character, String> getCodeMap(SIG lastSIG, int[] letterCosts, char[] symbols) {
+    private static Map<Character, String> generateCodeMap(SIG lastSIG, int[] letterCosts, char[] symbols) {
         Map<Character, String> codeMap = new HashMap<>();
-
+        
         Queue<Character> sortedSymbols = new LinkedList<>();
         for (char symbol : symbols) {
             sortedSymbols.add(symbol);
         }
 
-        LinkedList<SIG> path = new LinkedList<>();
+
+        LinkedList<SIG> path = new LinkedList<SIG>();
         SIG current = lastSIG;
         while (current != null) {
             path.addFirst(current);
             current = current.dad;
         }
-    
-        int r = letterCosts.length;
 
+        int r = letterCosts.length;
         String[] alphabet = new String[r];
         for (int i = 0; i < r; i++) {
             alphabet[i] = Integer.toString(i);
         }
-    
+
         class Node {
             String code;
-            int deph;
-            Node(String code, int deph) {
+            int depth;
+
+            Node(String code, int depth) {
                 this.code = code;
-                this.deph = deph;
+                this.depth = depth;
             }
         }
-    
-        //Queue<Node> nodes = new LinkedList<>();
-        Queue<Node> nodes = new PriorityQueue<>((a, b) -> Integer.compare(a.deph, b.deph));
 
+        Queue<Node> nodes = new PriorityQueue<>(Comparator.comparingInt(a -> a.depth));
         for (int k = 0; k < r; k++) {
-            Node child = new Node(alphabet[k], letterCosts[k]);
-            nodes.add(child);
+            nodes.add(new Node(alphabet[k], letterCosts[k]));
         }
 
-        for (int i = 0; i < path.size()-1; i++) {
-            int q = path.get(i+1).q;
-
-            int lastl1 = path.get(i).getLevels()[0];
+        for (int i = 0; i < path.size() - 1; i++) {
+            int q = path.get(i + 1).q;
+            int lastLevel = path.get(i).getLevels()[0];
 
             for (int j = 0; j < q; j++) {
                 Node parent = nodes.poll();
                 for (int k = 0; k < r; k++) {
-                    Node child = new Node(parent.code + alphabet[k], parent.deph + letterCosts[k]);
-                    nodes.add(child);
+                    nodes.add(new Node(parent.code + alphabet[k], parent.depth + letterCosts[k]));
                 }
             }
 
-            for (int j = q; j < lastl1; j++) {
+            for (int j = q; j < lastLevel; j++) {
                 Node leaf = nodes.poll();
-                if(sortedSymbols.size() > 0){
+                if (!sortedSymbols.isEmpty()) {
                     codeMap.put(sortedSymbols.poll(), leaf.code);
                 }
             }
         }
-    
+
         return codeMap;
     }
-    
 
-    public static Map<Character, String> findOptimalPrefixFreeCode(char[] message, int[] c) {
+    public static Map<Character, String> findOptimalPrefixFreeCode(char[] message, int[] costs) {
+        float[] probabilities = calculateFrequencies(message);
+        char[] symbols = extractAlphabet(message);
+        sortSymbolsByProbability(probabilities, symbols);
 
-        float[] p = getfrequency(message);
+        int n = probabilities.length;
+        int[] depths = calculateDepths(costs);
 
-        char[] symbols = getAlphabet(message);
-        sortByProbabilityDescending(p, symbols);
+        Map<SIG, Float> optimalCosts = new HashMap<>();
+        SIG initialSIG = new SIG(0, Arrays.copyOf(depths, depths.length), null, 1);
+        adjustSIG(initialSIG, n);
 
-        int n = p.length;
-
-        int[] d = getdeph(c);
-        
-        Map<SIG, Float> OPT = new HashMap<>();
-
-        int m = 0;
-        int[] levels = Arrays.copyOf(d, d.length);
-        SIG firstSIG = new SIG(m, levels, null, 1);
-
-        reduce(firstSIG, n);
-
-        OPT.put(firstSIG, (float) 0);
-
+        optimalCosts.put(initialSIG, 0f);
         PriorityQueue<SIG> queue = new PriorityQueue<>(new SignatureComparator());
-        queue.add(firstSIG);
+        queue.add(initialSIG);
 
-        ArrayList<SIG> perfektSIGs = new ArrayList<SIG>();
-        SIG perfektSIG = null;
+        List<SIG> perfectSIGs = new ArrayList<>();
 
-        while(!queue.isEmpty()){
-            SIG akkSIG = queue.poll();
+        while (!queue.isEmpty()) {
+            SIG currentSIG = queue.poll();
+            int currentM = currentSIG.getM();
+            int firstLevel = currentSIG.getLevels()[0];
 
-            int m_curr = akkSIG.getM();
-            int l1 = akkSIG.getLevels()[0];
-
-            for (int q = 0; q <= akkSIG.getLevels()[0]; q++){
-
-                if (q > n - Sum(akkSIG.getM(),akkSIG.getLevels())){
+            for (int q = 0; q <= firstLevel; q++) {
+                if (q > n - calculateSum(currentSIG.getM(), currentSIG.getLevels())) {
                     break;
                 }
 
-                float cost = cost_i(p, m_curr, l1, q);
-                float newcost = OPT.getOrDefault(akkSIG, Float.MAX_VALUE) + cost;
+                float cost = calculateCost(probabilities, currentM, firstLevel, q);
+                float newCost = optimalCosts.getOrDefault(currentSIG, Float.MAX_VALUE) + cost;
 
-                int newM = akkSIG.getM() + akkSIG.getLevels()[0] - q;
+                int newM = currentSIG.getM() + firstLevel - q;
+                int[] newLevels = Arrays.copyOfRange(currentSIG.getLevels(), 1, currentSIG.getLevels().length);
+                newLevels = Arrays.copyOf(newLevels, newLevels.length + 1);
+                newLevels[newLevels.length - 1] = 0;
 
-                int[] oldLevels = akkSIG.getLevels();
-                int[] newLevels = new int[oldLevels.length];
-
-                for (int i = 1; i < oldLevels.length; i++) {
-                    newLevels[i - 1] = oldLevels[i];
-                }
-                newLevels[oldLevels.length - 1] = 0;
-
-                for (int i = 0; i < d.length; i++) {
-                    newLevels[i] += q * d[i];
+                for (int i = 0; i < depths.length; i++) {
+                    newLevels[i] += q * depths[i];
                 }
 
-                SIG newSIG = new SIG(newM, newLevels, akkSIG, q);
+                SIG newSIG = new SIG(newM, newLevels, currentSIG, q);
+                adjustSIG(newSIG, n);
 
-                reduce(newSIG, n);
-                if (newcost < OPT.getOrDefault(newSIG, Float.MAX_VALUE) && Sum(newSIG.getM(), newSIG.getLevels()) <= n){
-                    OPT.put(newSIG, newcost);
+                if (newCost < optimalCosts.getOrDefault(newSIG, Float.MAX_VALUE) && calculateSum(newSIG.getM(), newSIG.getLevels()) <= n) {
+                    optimalCosts.put(newSIG, newCost);
                     queue.add(newSIG);
-                    akkSIG.addChild(newSIG);
+                    currentSIG.addChild(newSIG);
                 }
 
-                if (Sum(newSIG.getM(), newSIG.getLevels()) == n && newSIG.getM() == n){
-                    perfektSIGs.add(newSIG);
+                if (calculateSum(newSIG.getM(), newSIG.getLevels()) == n && newSIG.getM() == n) {
+                    perfectSIGs.add(newSIG);
                 }
             }
         }
 
-
-        int cost = Integer.MAX_VALUE;
-        for (SIG sig : perfektSIGs){
-            cost(message, c, symbols, sig, cost);
+        int minCost = Integer.MAX_VALUE;
+        for (SIG sig : perfectSIGs) {
+            calculateMessageCost(message, costs, symbols, sig, minCost);
         }
 
-        return endcodeMap;
+        return encodeMap;
     }
 
-    private static int Sum(int m, int[] levels) {
-        int sum = m;
-        for (int i = 0; i < levels.length; i++) {
-            sum += levels[i];
-        }
-        return sum;
+    private static int calculateSum(int m, int[] levels) {
+        return m + Arrays.stream(levels).sum();
     }
 
-    private static void reduce(SIG newSig, int n) {
-        int m = newSig.getM();
-        int[] levels = newSig.getLevels();
+    private static void adjustSIG(SIG sig, int n) {
+        int m = sig.getM();
+        int[] levels = sig.getLevels();
 
-        if (m > n){
+        if (m > n) {
             m = n;
         }
 
         int sum = m;
-        
         for (int i = 0; i < levels.length; i++) {
             int allowed = n - sum;
-    
             if (levels[i] > allowed) {
                 levels[i] = allowed;
             }
-    
             sum += levels[i];
         }
 
-        newSig.m = m;
-        newSig.levels = levels;
+        sig.m = m;
+        sig.levels = levels;
     }
 
-    private static float cost_i(float[] p, int m, int l1, int q) {
+    private static float calculateCost(float[] probabilities, int m, int firstLevel, int q) {
         float cost = 0;
-        for (int t = m + q; t < m + l1; t++) {
-            cost += p[t];
+        for (int t = m + q; t < m + firstLevel; t++) {
+            cost += probabilities[t];
         }
         return cost;
     }
 
-    private static int cost(char[] message, int[] costs, char[] symbols, SIG sig, int cost) {
-        
-        Map<Character, String> codeMap = getCodeMap(sig, costs, symbols);
-
-        HashMap<Integer, Integer> pearlTypeMap = new HashMap<>();
+    private static int calculateMessageCost(char[] message, int[] costs, char[] symbols, SIG sig, int minCost) {
+        Map<Character, String> codeMap = generateCodeMap(sig, costs, symbols);
+        Map<Integer, Integer> costMap = new HashMap<>();
 
         for (int i = 0; i < costs.length; i++) {
-            pearlTypeMap.put(i, costs[i]);
+            costMap.put(i, costs[i]);
         }
 
-        // Encode message
-        StringBuilder messageCodeBuilder = new StringBuilder();
+        StringBuilder encodedMessage = new StringBuilder();
         for (char c : message) {
-            messageCodeBuilder.append(codeMap.get(c));
-        }
-        String messageCode = messageCodeBuilder.toString();
-
-        // Calculate the length of the encoded message
-        int messageLength = 0;
-        for (char m : messageCode.toCharArray()) {
-            messageLength += pearlTypeMap.get(Integer.parseInt(Character.toString(m)));
+            encodedMessage.append(codeMap.get(c));
         }
 
-        if(cost > messageLength){
-            endcodeMap = codeMap;
+        int totalCost = 0;
+        for (char c : encodedMessage.toString().toCharArray()) {
+            totalCost += costMap.get(Character.getNumericValue(c));
         }
 
-        return messageLength;
+        if (minCost > totalCost) {
+            encodeMap = codeMap;
+        }
+
+        return totalCost;
     }
 }
