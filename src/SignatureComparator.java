@@ -1,5 +1,6 @@
 import java.util.Comparator;
 
+
 public class SignatureComparator implements Comparator<SIG> {
     @Override
     public int compare(SIG a, SIG b) {

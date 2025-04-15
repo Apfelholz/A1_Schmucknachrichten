@@ -133,32 +133,37 @@ public class UnequalCostPrefixFreeCode {
 
         int[] d = getdeph(c);
         
-        Map<SIG, Integer> OPT = new HashMap<>();
+        Map<SIG, Float> OPT = new HashMap<>();
 
         int m = 0;
         int[] levels = Arrays.copyOf(d, d.length);
-        SIG akkSIG = new SIG(m, levels, null, 1);
+        SIG firstSIG = new SIG(m, levels, null, 1);
 
-        OPT.put(akkSIG, 0);
+        reduce(firstSIG, n);
+
+        OPT.put(firstSIG, (float) 0);
 
         PriorityQueue<SIG> queue = new PriorityQueue<>(new SignatureComparator());
-        queue.add(akkSIG);
+        queue.add(firstSIG);
 
         SIG perfektSIG = null;
 
-        while(true){
-            akkSIG = queue.poll();
+        while(!queue.isEmpty()){
+            SIG akkSIG = queue.poll();
 
-            int additonalCost = 0; 
-            for (int t = akkSIG.getM(); t < n; t++) {
-                additonalCost += p[t];
-            }
-
-            int newcost = OPT.getOrDefault(akkSIG, Integer.MAX_VALUE) + additonalCost;
+            int m_curr = akkSIG.getM();
+            int l1 = akkSIG.getLevels()[0];
 
             for (int q = 0; q <= akkSIG.getLevels()[0]; q++){
 
-                int newM = akkSIG.getM() + akkSIG.getLevels()[0] - q;;
+                if (q > n - Sum(akkSIG.getM(),akkSIG.getLevels())){
+                    break;
+                }
+
+                float cost = cost_i(p, m_curr, l1, q);
+                float newcost = OPT.getOrDefault(akkSIG, Float.MAX_VALUE) + cost;
+
+                int newM = akkSIG.getM() + akkSIG.getLevels()[0] - q;
 
                 int[] oldLevels = akkSIG.getLevels();
                 int[] newLevels = new int[oldLevels.length];
@@ -174,22 +179,63 @@ public class UnequalCostPrefixFreeCode {
 
                 SIG newSIG = new SIG(newM, newLevels, akkSIG, q);
 
-                if (newcost < OPT.getOrDefault(newSIG, Integer.MAX_VALUE)){
+                reduce(newSIG, n);
+                if (newcost < OPT.getOrDefault(newSIG, Float.MAX_VALUE) && Sum(newSIG.getM(), newSIG.getLevels()) <= n){
                     OPT.put(newSIG, newcost);
                     queue.add(newSIG);
-                }
-
-                if (newSIG.getM() >= n) { //*(c.length-1)
-                    perfektSIG = newSIG;
-                    break;
+                    akkSIG.addChild(newSIG);
                 }
             }
-            
-            if (perfektSIG != null){
-                break;
+        }
+
+        for (SIG sig : OPT.keySet()){
+            if (Sum(sig.getM(), sig.getLevels()) == n && sig.getM() == n){
+                if (OPT.getOrDefault(perfektSIG, Float.MAX_VALUE) > OPT.get(sig)){
+                    perfektSIG = sig;
+                }
             }
         }
 
         return getCodeMap(perfektSIG, c, symbols);
+    }
+
+    private static int Sum(int m, int[] levels) {
+        int sum = m;
+        for (int i = 0; i < levels.length; i++) {
+            sum += levels[i];
+        }
+        return sum;
+    }
+
+    private static void reduce(SIG newSig, int n) {
+        int m = newSig.getM();
+        int[] levels = newSig.getLevels();
+
+        if (m > n){
+            m = n;
+        }
+
+        int sum = m;
+        
+        for (int i = 0; i < levels.length; i++) {
+            int allowed = n - sum;
+    
+            if (levels[i] > allowed) {
+                levels[i] = allowed;
+            }
+    
+            sum += levels[i];
+        }
+
+        newSig.m = m;
+        newSig.levels = levels;
+    }
+
+    private static float cost_i(float[] p, int m, int l1, int q) {
+        float cost = 0;
+        for (int t = m + q; t < m + l1; t++) {
+            cost += p[t];
+        }
+        return cost;
     }
 }  
