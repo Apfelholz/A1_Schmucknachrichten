@@ -1,6 +1,7 @@
 import java.util.*;
 
 public class UnequalCostPrefixFreeCode {
+    static Map<Character, String> endcodeMap;
 
     private static float[] getfrequency(char[] message) {
         Map<Character, Integer> frequencyMap = new HashMap<>();
@@ -146,6 +147,7 @@ public class UnequalCostPrefixFreeCode {
         PriorityQueue<SIG> queue = new PriorityQueue<>(new SignatureComparator());
         queue.add(firstSIG);
 
+        ArrayList<SIG> perfektSIGs = new ArrayList<SIG>();
         SIG perfektSIG = null;
 
         while(!queue.isEmpty()){
@@ -185,18 +187,20 @@ public class UnequalCostPrefixFreeCode {
                     queue.add(newSIG);
                     akkSIG.addChild(newSIG);
                 }
-            }
-        }
 
-        for (SIG sig : OPT.keySet()){
-            if (Sum(sig.getM(), sig.getLevels()) == n && sig.getM() == n){
-                if (OPT.getOrDefault(perfektSIG, Float.MAX_VALUE) > OPT.get(sig)){
-                    perfektSIG = sig;
+                if (Sum(newSIG.getM(), newSIG.getLevels()) == n && newSIG.getM() == n){
+                    perfektSIGs.add(newSIG);
                 }
             }
         }
 
-        return getCodeMap(perfektSIG, c, symbols);
+
+        int cost = Integer.MAX_VALUE;
+        for (SIG sig : perfektSIGs){
+            cost(message, c, symbols, sig, cost);
+        }
+
+        return endcodeMap;
     }
 
     private static int Sum(int m, int[] levels) {
@@ -238,4 +242,34 @@ public class UnequalCostPrefixFreeCode {
         }
         return cost;
     }
-}  
+
+    private static int cost(char[] message, int[] costs, char[] symbols, SIG sig, int cost) {
+        
+        Map<Character, String> codeMap = getCodeMap(sig, costs, symbols);
+
+        HashMap<Integer, Integer> pearlTypeMap = new HashMap<>();
+
+        for (int i = 0; i < costs.length; i++) {
+            pearlTypeMap.put(i, costs[i]);
+        }
+
+        // Encode message
+        StringBuilder messageCodeBuilder = new StringBuilder();
+        for (char c : message) {
+            messageCodeBuilder.append(codeMap.get(c));
+        }
+        String messageCode = messageCodeBuilder.toString();
+
+        // Calculate the length of the encoded message
+        int messageLength = 0;
+        for (char m : messageCode.toCharArray()) {
+            messageLength += pearlTypeMap.get(Integer.parseInt(Character.toString(m)));
+        }
+
+        if(cost > messageLength){
+            endcodeMap = codeMap;
+        }
+
+        return messageLength;
+    }
+}
