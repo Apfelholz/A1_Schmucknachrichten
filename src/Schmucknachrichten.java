@@ -120,9 +120,9 @@ public class Schmucknachrichten {
 
         if (fileName.equals("schmuck0.txt") && messageLength != 113) {
             return false;
-        } else if (fileName.equals("schmuck5.txt") && messageLength >= 3162) {
+        } else if (fileName.equals("schmuck5.txt") && messageLength > 3162) {
             return false;
-        } else if (fileName.equals("schmuck9.txt") && messageLength >= 36597) {
+        } else if (fileName.equals("schmuck9.txt") && messageLength > 36597) {
             return false;
         }
 
