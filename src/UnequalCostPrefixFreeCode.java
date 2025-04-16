@@ -140,11 +140,11 @@ public class UnequalCostPrefixFreeCode {
             int firstLevel = currentSIG.getLevels()[0];
 
             for (int q = 0; q <= firstLevel; q++) {
-                if (q > n - calculateSum(currentSIG.getM(), currentSIG.getLevels())) {
+                if (q > n - calculateSum(currentSIG.getM(), Arrays.copyOfRange(currentSIG.getLevels(), 0, 1))) {
                     break;
                 }
 
-                float cost = calculateCost(probabilities, currentM, firstLevel, q);
+                float cost = calculateCost(probabilities, currentM, firstLevel, n);
                 float newCost = optimalCosts.getOrDefault(currentSIG, Float.MAX_VALUE) + cost;
 
                 int newM = currentSIG.getM() + firstLevel - q;
@@ -207,10 +207,10 @@ public class UnequalCostPrefixFreeCode {
         sig.levels = levels;
     }
 
-    private static float calculateCost(float[] probabilities, int m, int firstLevel, int q) {
+    private static float calculateCost(float[] probabilities, int m, int firstLevel, int n) {
         float cost = 0;
-        for (int t = m + q; t < m + firstLevel; t++) {
-            cost += probabilities[t];
+        for (int t = m+1; t <= n; t++) {
+            cost += probabilities[t-1];
         }
         return cost;
     }
