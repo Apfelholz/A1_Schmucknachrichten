@@ -1,80 +1,85 @@
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
+
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 
 public class SchmucknachrichtenTest {
 
-    // test with ILP
+    // test with SIG
 
     @Test
-    void testMainWithSchmuckILPB() {
-        testMainWithFile("./data/schmuckB.txt", "ILP");
+    void testMainWithSchmuckSIGB() {
+        testMainWithFile("./data/schmuckB.txt", "SIG");
     }
 
     @Test
-    void testMainWithSchmuckILPA() {
-        testMainWithFile("./data/schmuckA.txt", "ILP");
+    void testMainWithSchmuckSIGA() {
+        testMainWithFile("./data/schmuckA.txt", "SIG");
     }
 
     @Test
-    void testMainWithSchmuckILP0() {
-        testMainWithFile("./data/schmuck0.txt", "ILP");
+    void testMainWithSchmuckSIG0() {
+        testMainWithFile("./data/schmuck0.txt", "SIG");
     }
 
     @Test
-    void testMainWithSchmuckILP00() {
-        testMainWithFile("./data/schmuck00.txt", "ILP");
+    void testMainWithSchmuckSIG00() {
+        testMainWithFile("./data/schmuck00.txt", "SIG");
     }
 
     @Test
-    void testMainWithSchmuckILP01() {
-        testMainWithFile("./data/schmuck01.txt", "ILP");
+    void testMainWithSchmuckSIG01() {
+        testMainWithFile("./data/schmuck01.txt", "SIG");
     }
 
     @Test
-    void testMainWithSchmuckILP1() {
-        testMainWithFile("./data/schmuck1.txt", "ILP"); 
+    void testMainWithSchmuckSIG1() {
+        testMainWithFile("./data/schmuck1.txt", "SIG"); 
     }
 
     @Test
-    void testMainWithSchmuckILP2() {
-        testMainWithFile("./data/schmuck2.txt", "ILP");
+    void testMainWithSchmuckSIG2() {
+        testMainWithFile("./data/schmuck2.txt", "SIG");
     }
 
     @Test
-    void testMainWithSchmuckILP3() {
-        testMainWithFile("./data/schmuck3.txt", "ILP");
+    void testMainWithSchmuckSIG3() {
+        testMainWithFile("./data/schmuck3.txt", "SIG");
     }
 
     @Test
-    void testMainWithSchmuckILP4() {
-        testMainWithFile("./data/schmuck4.txt", "ILP");
+    void testMainWithSchmuckSIG4() {
+        testMainWithFile("./data/schmuck4.txt", "SIG");
     }
 
     @Test
-    void testMainWithSchmuckILP5() {
-        testMainWithFile("./data/schmuck5.txt", "ILP");
+    void testMainWithSchmuckSIG5() {
+        testMainWithFile("./data/schmuck5.txt", "SIG");
     }
 
     @Test
-    void testMainWithSchmuckILP6() {
-        testMainWithFile("./data/schmuck6.txt", "ILP");
+    void testMainWithSchmuckSIG6() {
+        testMainWithFile("./data/schmuck6.txt", "SIG");
     }
 
     @Test
-    void testMainWithSchmuckILP7() {
-        testMainWithFile("./data/schmuck7.txt", "ILP");
+    void testMainWithSchmuckSIG7() {
+        testMainWithFile("./data/schmuck7.txt", "SIG");
     }
 
     @Test
-    void testMainWithSchmuckILP8() {
-        testMainWithFile("./data/schmuck8.txt", "ILP");
+    void testMainWithSchmuckSIG8() {
+        testMainWithFile("./data/schmuck8.txt", "SIG");
     }
 
     @Test
-    void testMainWithSchmuckILP9() {
-        testMainWithFile("./data/schmuck9.txt", "ILP");
+    void testMainWithSchmuckSIG9() {
+        testMainWithFile("./data/schmuck9.txt", "SIG");
     }
 
     // test with Huffman
@@ -155,32 +160,47 @@ public class SchmucknachrichtenTest {
         PrintStream originalOut = System.out;
         System.setOut(new PrintStream(outContent));
 
-        // Call the main method with the input file path
+        // Call the main method of your Java program
         try {
             Schmucknachrichten.main(new String[]{filePath, method});
             System.out.println("Test with file " + filePath + " ran successfully.");
         } catch (Exception e) {
             fail("Exception thrown: " + e.getMessage());
         } finally {
-            // Reset System.out
-            System.setOut(originalOut);
+            System.setOut(originalOut); // Reset System.out
         }
 
-        // Verify the output
+        // Capture and split output
         String output = outContent.toString();
         assertFalse(output.isEmpty(), "Output should not be empty for file: " + filePath);
         String[] lines = output.split("\n");
-        boolean found = false;
-        for (String line : lines) {
-            if (line.startsWith("Is of appropriate Length: true")) {
-                found = true;
-                break;
-            }
+
+        // Prepare Python call
+        List<String> command = new ArrayList<>();
+        command.add("python");
+        command.add("D:\\Documents\\Programiren\\Informatik Wettbewerb\\BWINF 2024\\Runde 2\\code_visualization\\src\\code_visualition.py");
+        command.add("--config");
+        command.add("temp_config.json");
+
+        try {
+            ProcessBuilder pb = new ProcessBuilder(command);
+            pb.inheritIO(); // optional: show Python output/errors in console
+            Process process = pb.start();
+            int exitCode = process.waitFor();
+            assertEquals(0, exitCode, "Python visualization script should run without errors.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail("Failed to run Python script: " + e.getMessage());
         }
-        
-        // Use TestResultFormatter to print the file path and the captured output for meaningful test results
+
+        // Check for success marker in the output
+        boolean found = Arrays.stream(lines)
+            .anyMatch(line -> line.startsWith("Is of appropriate Length: true"));
+
+        // Print for context
         TestResultFormatter.printTestResult(filePath, output);
-        
         assertTrue(found, "Message is of appropriate Length.");
     }
+
+
 }

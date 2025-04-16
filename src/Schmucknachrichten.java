@@ -24,7 +24,7 @@ public class Schmucknachrichten {
 
         // Create code map
         Map<Character, String> codeMap = new HashMap<>();
-        if (method.equals("ILP")) {
+        if (method.equals("SIG")) {
             codeMap = UnequalCostPrefixFreeCode.findOptimalPrefixFreeCode(message, pearlTypes);
         } else if (method.equals("Huffman")) {
             codeMap = HuffmanKodierungNonBinary.huffmanKodierung(message, numberOfDifferentPearlTypes);
@@ -62,6 +62,37 @@ public class Schmucknachrichten {
         System.out.println("Is of appropriate Length: " + isOfAppropriateLength);
         System.out.println("Is prefix-free: " + isPrefixFree);
         System.out.println("Encoding is Accurate: " + isMessageEncodingAccurate);
+        // Create JSON representation
+        StringBuilder jsonBuilder = new StringBuilder();
+        jsonBuilder.append("{\n");
+        jsonBuilder.append("  \"pearl\": {\n");
+        pearlTypeMap.forEach((key, value) -> 
+            jsonBuilder.append("    \"").append(key).append("\": ").append(value).append(",\n")
+        );
+        if (!pearlTypeMap.isEmpty()) {
+            jsonBuilder.setLength(jsonBuilder.length() - 2); // Remove trailing comma
+        }
+        jsonBuilder.append("\n  },\n");
+        jsonBuilder.append("  \"codes\": {\n");
+        codeMap.forEach((key, value) -> 
+            jsonBuilder.append("    \"")
+               .append(key.toString().replace("\"", "\\\"").replace("’", "\\u2019").replace("，", "\\uFF0C")) // Escape problematic characters in key
+               .append("\": \"")
+               .append(value.replace("\"", "\\\"").replace("’", "\\u2019").replace("，", "\\uFF0C")) // Escape problematic characters in value
+               .append("\",\n")
+        );
+        if (!codeMap.isEmpty()) {
+            jsonBuilder.setLength(jsonBuilder.length() - 2); // Remove trailing comma
+        }
+        jsonBuilder.append("\n  },\n");
+        jsonBuilder.append("  \"output\": \"output\\\\tree_").append(method).append("_").append(dateipfad.substring(14, 16)).append("\"\n");
+        jsonBuilder.append("}");
+
+        // Write JSON to file
+        java.nio.file.Files.write(
+            java.nio.file.Paths.get("temp_config.json"), 
+            jsonBuilder.toString().getBytes()
+        );
     }
 
     // Checks if the code map is prefix-free
