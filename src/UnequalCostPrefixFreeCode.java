@@ -141,6 +141,10 @@ public class UnequalCostPrefixFreeCode {
 
             for (int q = 0; q <= firstLevel; q++) {
 
+                if (calculateSum(currentM, currentSIG.getLevels()) == n && q > 0){
+                    break;
+                }
+
                 double cost = calculateCost(probabilities, currentM, firstLevel, n);
                 double newCost = optimalCosts.getOrDefault(currentSIG, Double.MAX_VALUE) + cost;
 
