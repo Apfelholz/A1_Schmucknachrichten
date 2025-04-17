@@ -8,13 +8,15 @@ public class SIG {
     int m;
     int[] levels;
     ArrayList<SIG> childs;
+    int cost;
 
-    public SIG(int m, int[] levels, SIG dad, int q) {
+    public SIG(int m, int[] levels, SIG dad, int q, int cost) {
         this.m = m;
         this.levels = Arrays.copyOf(levels, levels.length);
         this.dad = dad;
         this.q = q;
         this.childs = new ArrayList<SIG>();
+        this. cost = cost;
     }
 
     public void addChild(SIG child) {

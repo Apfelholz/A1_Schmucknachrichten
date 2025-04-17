@@ -3,18 +3,18 @@ import java.util.*;
 public class UnequalCostPrefixFreeCode {
     static Map<Character, String> encodeMap;
 
-    private static double[] calculateFrequencies(char[] message) {
+    private static int[] calculateFrequencies(char[] message) {
         Map<Character, Integer> frequencyMap = new HashMap<>();
         for (char c : message) {
             frequencyMap.put(c, frequencyMap.getOrDefault(c, 0) + 1);
         }
 
-        double[] frequencies = new double[frequencyMap.size()];
+        int[] frequencies = new int[frequencyMap.size()];
         int index = 0;
         int total = message.length;
 
         for (int count : frequencyMap.values()) {
-            frequencies[index++] = (double) count / total;
+            frequencies[index++] = (int) count;
         }
 
         return frequencies;
@@ -44,12 +44,12 @@ public class UnequalCostPrefixFreeCode {
         return depths;
     }
 
-    private static void sortSymbolsByProbability(double[] probabilities, char[] symbols) {
-        List<Map.Entry<Character, Double>> pairs = new ArrayList<>();
+    private static void sortSymbolsByProbability(int[] probabilities, char[] symbols) {
+        List<Map.Entry<Character, Integer>> pairs = new ArrayList<>();
         for (int i = 0; i < probabilities.length; i++) {
             pairs.add(new AbstractMap.SimpleEntry<>(symbols[i], probabilities[i]));
         }
-        pairs.sort((a, b) -> Double.compare(b.getValue(), a.getValue()));
+        pairs.sort((a, b) -> Integer.compare(b.getValue(), a.getValue()));
 
         for (int i = 0; i < probabilities.length; i++) {
             symbols[i] = pairs.get(i).getKey();
@@ -117,18 +117,18 @@ public class UnequalCostPrefixFreeCode {
     }
 
     public static Map<Character, String> findOptimalPrefixFreeCode(char[] message, int[] costs) {
-        double[] probabilities = calculateFrequencies(message);
+        int[] probabilities = calculateFrequencies(message);
         char[] symbols = extractAlphabet(message);
         sortSymbolsByProbability(probabilities, symbols);
 
         int n = probabilities.length;
         int[] depths = calculateDepths(costs);
 
-        Map<SIG, Double> optimalCosts = new HashMap<>();
-        SIG initialSIG = new SIG(0, Arrays.copyOf(depths, depths.length), null, 1);
+        Map<SIG, Integer> optimalCosts = new HashMap<>();
+        SIG initialSIG = new SIG(0, Arrays.copyOf(depths, depths.length), null, 1, 0);
         adjustSIG(initialSIG, n);
 
-        optimalCosts.put(initialSIG, (double) 0);
+        optimalCosts.put(initialSIG, (int) 0);
         PriorityQueue<SIG> queue = new PriorityQueue<>(new SignatureComparator());
         queue.add(initialSIG);
 
@@ -138,9 +138,9 @@ public class UnequalCostPrefixFreeCode {
             SIG currentSIG = queue.poll();
             int currentM = currentSIG.getM();
             int firstLevel = currentSIG.getLevels()[0];
-
-            double cost = calculateCost(probabilities, currentM, firstLevel, n);
-            double newCost = optimalCosts.getOrDefault(currentSIG, Double.MAX_VALUE) + cost;
+            
+            int cost = calculateCost(probabilities, currentM, firstLevel, n);
+            int newCost = currentSIG.cost + cost;
 
             for (int q = 0; q <= firstLevel; q++) {
 
@@ -157,10 +157,10 @@ public class UnequalCostPrefixFreeCode {
                     newLevels[i] += q * depths[i];
                 }
 
-                SIG newSIG = new SIG(newM, newLevels, currentSIG, q);
+                SIG newSIG = new SIG(newM, newLevels, currentSIG, q, newCost);
                 while (adjustSIG(newSIG, n));
 
-                if (newCost < optimalCosts.getOrDefault(newSIG, Double.MAX_VALUE) && calculateSum(newSIG.getM(), newSIG.getLevels()) <= n && isValidExpansion(q, newSIG.getLevels(), currentSIG.getLevels())) {
+                if (newCost < optimalCosts.getOrDefault(newSIG, Integer.MAX_VALUE) && calculateSum(newSIG.getM(), newSIG.getLevels()) <= n && isValidExpansion(q, newSIG.getLevels(), currentSIG.getLevels())) {
                     optimalCosts.put(newSIG, newCost);
                     queue.add(newSIG);
                     currentSIG.addChild(newSIG);
@@ -219,8 +219,8 @@ public class UnequalCostPrefixFreeCode {
         }
     }
 
-    private static double calculateCost(double[] probabilities, int m, int firstLevel, int n) {
-        double cost = 0;
+    private static int calculateCost(int[] probabilities, int m, int firstLevel, int n) {
+        int cost = 0;
         for (int t = m+1; t <= n; t++) {
             cost += probabilities[t-1];
         }
