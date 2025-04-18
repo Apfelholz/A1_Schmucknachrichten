@@ -54,15 +54,80 @@ public class Schmucknachrichten {
         String shortenedPearlTypeMap = pearlTypeMap.toString().length() > 100 ? pearlTypeMap.toString().substring(0, 100) + "..." : pearlTypeMap.toString();
         String codeMapRepresentation = codeMap.toString().length() > 100 ? codeMap.toString().substring(0, 100) + "..." : codeMap.toString();
 
-        System.out.println("First 40 characters of messageCode: " + shortenedMessageCode);
+        FileLogger fileLogger = new FileLogger("output\\output_" + method + "_" + dateipfad.substring(14, 16) + ".txt");
+
+        System.out.println("====================================");
+        System.out.println("Results for file: " + dateipfad);
+
+        System.out.println("The message: ");
+        System.out.println(new String(message));
+        System.out.println("The massageCode: ");
+        System.out.println(messageCode);
+        System.out.println("The pearlTypeMap (PearlType : Length in mm): ");
+        System.out.println(pearlTypeMap.toString());
+        System.out.println("The CodeMap/'Codetabelle' (Character : PearlSequence): ");
+        System.out.println(codeMap.toString());
+
+        System.out.println("====================================");
+        System.out.println("Results for file: " + dateipfad);
+        System.out.println("====================================");
+
         System.out.println("First 40 characters of message: " + shortenedMessage);
-        System.out.println("Shortened pearlTypeMap: " + shortenedPearlTypeMap);
-        System.out.println("CodeMap: " + codeMapRepresentation);
+        System.out.println("First 40 characters of messageCode: " + shortenedMessageCode);
+        System.out.println("Shortened pearlTypeMap (PearlType : Length in mm): " + shortenedPearlTypeMap);
+        System.out.println("Shortened CodeMap/'Codetabelle' (Character : PearlSequence): " + codeMapRepresentation);
         System.out.println("Length of the encoded message: " + messageLength + " mm");
         System.out.println("Is of appropriate Length: " + isOfAppropriateLength);
         System.out.println("Is prefix-free: " + isPrefixFree);
         System.out.println("Encoding is Accurate: " + isMessageEncodingAccurate);
-        // Create JSON representation
+        System.out.println("Note: The output is also written to a file where the encoding works better, including the UTF-8 codes in plain text as an extra precaution.");
+
+        System.out.println("====================================");
+
+
+        fileLogger.println("====================================");
+        fileLogger.println("Results for file: " + dateipfad);
+        fileLogger.println("====================================");
+
+        fileLogger.println("First 40 characters of messageCode: " + shortenedMessageCode);
+        fileLogger.println("First 40 characters of message: " + shortenedMessage);
+        fileLogger.println("Shortened pearlTypeMap (PearlType : Length in mm): " + shortenedPearlTypeMap);
+        fileLogger.println("Shortened CodeMap/'Codetabelle' (Character : PearlSequence): " + codeMapRepresentation);
+        fileLogger.println("Length of the encoded message: " + messageLength + " mm");
+        fileLogger.println("Is of appropriate Length: " + isOfAppropriateLength);
+        fileLogger.println("Is prefix-free: " + isPrefixFree);
+        fileLogger.println("Encoding is Accurate: " + isMessageEncodingAccurate);
+
+        fileLogger.println("====================================");
+        fileLogger.println("");
+
+        fileLogger.println("The message: ");
+        fileLogger.println(new String(message));
+        fileLogger.println("");
+        fileLogger.println("The massageCode: ");
+        fileLogger.println(messageCode);
+        fileLogger.println("");
+        fileLogger.println("The pearlTypeMap (PearlType : Length in mm): ");
+        fileLogger.println(pearlTypeMap.toString());
+        fileLogger.println("");
+        fileLogger.println("The CodeMap/'Codetabelle' (Character : PearlSequence): ");
+        fileLogger.println(codeMap.toString());
+        fileLogger.println("");
+
+        fileLogger.println("====================================");
+        fileLogger.println("");
+
+        fileLogger.println("The message as Unicode codes");
+        new String(message).codePoints().forEach(cp -> fileLogger.print(
+            String.format("U+%04X ", cp)
+        ));
+        fileLogger.println("");
+        fileLogger.println("The pearlTypeMap with Unicode codes: ");
+        fileLogger.println(getUnicodeKeyMap(codeMap));
+
+
+        fileLogger.close();
+        
         StringBuilder jsonBuilder = new StringBuilder();
         jsonBuilder.append("{\n");
         jsonBuilder.append("  \"pearl\": {\n");
@@ -70,7 +135,7 @@ public class Schmucknachrichten {
             jsonBuilder.append("    \"").append(key).append("\": ").append(value).append(",\n")
         );
         if (!pearlTypeMap.isEmpty()) {
-            jsonBuilder.setLength(jsonBuilder.length() - 2); // Remove trailing comma
+            jsonBuilder.setLength(jsonBuilder.length() - 2);
         }
         jsonBuilder.append("\n  },\n");
         jsonBuilder.append("  \"codes\": {\n");
@@ -82,17 +147,45 @@ public class Schmucknachrichten {
                .append("\",\n")
         );
         if (!codeMap.isEmpty()) {
-            jsonBuilder.setLength(jsonBuilder.length() - 2); // Remove trailing comma
+            jsonBuilder.setLength(jsonBuilder.length() - 2);
         }
         jsonBuilder.append("\n  },\n");
         jsonBuilder.append("  \"output\": \"output\\\\tree_").append(method).append("_").append(dateipfad.substring(14, 16)).append("\"\n");
         jsonBuilder.append("}");
 
-        // Write JSON to file
         java.nio.file.Files.write(
             java.nio.file.Paths.get("temp_config.json"), 
             jsonBuilder.toString().getBytes()
         );
+    }
+
+    public static String getUnicodeKeyMap(Map<Character, String> codeMap) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("{");
+
+        boolean first = true;
+        for (Map.Entry<Character, String> entry : codeMap.entrySet()) {
+            if (!first) {
+                sb.append(", ");
+            } else {
+                first = false;
+            }
+
+            char ch = entry.getKey();
+            int codePoint = Character.codePointAt(new char[]{ch}, 0);
+            String unicodeKey;
+
+            if (Character.isSupplementaryCodePoint(codePoint)) {
+                unicodeKey = String.format("U+%04X ", codePoint); // Für Supplementary Characters
+            } else {
+                unicodeKey = String.format("U+%04X ", codePoint); // Für BMP-Zeichen
+            }
+
+            sb.append(unicodeKey).append("=").append(entry.getValue());
+        }
+
+        sb.append("}");
+        return sb.toString();
     }
 
     // Checks if the code map is prefix-free
