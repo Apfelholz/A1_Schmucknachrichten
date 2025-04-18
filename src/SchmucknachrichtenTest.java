@@ -13,6 +13,11 @@ public class SchmucknachrichtenTest {
     // test with SIG
 
     @Test
+    void testMainWithSchmuckSIGC() {
+        testMainWithFile("./data/schmuckC.txt", "SIG");
+    }
+
+    @Test
     void testMainWithSchmuckSIGB() {
         testMainWithFile("./data/schmuckB.txt", "SIG");
     }
@@ -83,6 +88,11 @@ public class SchmucknachrichtenTest {
     }
 
     // test with Huffman
+
+    @Test
+    void testMainWithSchmuckHuffmanC() {
+        testMainWithFile("./data/schmuckC.txt", "Huffman");
+    }
 
     @Test
     void testMainWithSchmuckHuffmanB() {
@@ -197,8 +207,9 @@ public class SchmucknachrichtenTest {
         boolean found = Arrays.stream(lines)
             .anyMatch(line -> line.startsWith("Is of appropriate Length: true"));
 
-        // Print for context
-        TestResultFormatter.printTestResult(filePath, output);
+        for (String line : lines) {
+            System.out.println(line);
+        }
         assertTrue(found, "Message is of appropriate Length.");
     }
 
