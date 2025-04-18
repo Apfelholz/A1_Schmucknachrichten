@@ -11,7 +11,6 @@ public class UnequalCostPrefixFreeCode {
 
         int[] frequencies = new int[frequencyMap.size()];
         int index = 0;
-        int total = message.length;
 
         for (int count : frequencyMap.values()) {
             frequencies[index++] = (int) count;
@@ -144,10 +143,6 @@ public class UnequalCostPrefixFreeCode {
 
             for (int q = 0; q <= firstLevel; q++) {
 
-                if (calculateSum(currentM, currentSIG.getLevels()) == n && q > 0){
-                    break;
-                }
-
                 int newM = currentSIG.getM() + firstLevel - q;
                 int[] newLevels = Arrays.copyOfRange(currentSIG.getLevels(), 1, currentSIG.getLevels().length);
                 newLevels = Arrays.copyOf(newLevels, newLevels.length + 1);
@@ -163,7 +158,6 @@ public class UnequalCostPrefixFreeCode {
                 if (newCost < optimalCosts.getOrDefault(newSIG, Integer.MAX_VALUE) && calculateSum(newSIG.getM(), newSIG.getLevels()) <= n && isValidExpansion(q, newSIG.getLevels(), currentSIG.getLevels())) {
                     optimalCosts.put(newSIG, newCost);
                     queue.add(newSIG);
-                    currentSIG.addChild(newSIG);
                 }
 
                 if (calculateSum(newSIG.getM(), newSIG.getLevels()) == n && newSIG.getM() == n) {
