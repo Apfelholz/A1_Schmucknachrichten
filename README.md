@@ -31,7 +31,7 @@ The input is a `.txt` file that holds the message with the pearl types. The stru
 3. **The Message**:
     - The message to be encoded. All Unicode symbols are supported.
 4. **Length Request**:
-    - An optional line specifying a length the encoded message should have in the best case. (If nothing is specified, the algorithm tries to make it as short as possible.)
+    - An optional line specifying a desired length in mm for the encoded message. If no length is specified, the algorithm will attempt to minimize the message length.  
 
 ## Output Format
 
