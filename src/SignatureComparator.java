@@ -14,8 +14,8 @@ public class SignatureComparator implements Comparator<SIG> {
 
         // Vergleiche rückwärts: höchste Summe hat höchste Priorität
         for (int i = partialA.length - 1; i >= 0; i--) {
-            if (partialA[i] < partialB[i]) return -1;
-            if (partialA[i] > partialB[i]) return 1;
+            if (partialA[i] < partialB[i]) return 1;
+            if (partialA[i] > partialB[i]) return -1;
         }
         return 0; // exakt gleich
     }

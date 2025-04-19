@@ -13,6 +13,11 @@ public class SchmucknachrichtenTest {
     // test with SIG
 
     @Test
+    void testMainWithSchmuckSIGF() {
+        testMainWithFile("./data/schmuckF.txt", "SIG");
+    }
+
+    @Test
     void testMainWithSchmuckSIGE() {
         testMainWithFile("./data/schmuckE.txt", "SIG");
     }
@@ -99,6 +104,11 @@ public class SchmucknachrichtenTest {
     }
 
     // test with Huffman
+
+    @Test
+    void testMainWithSchmuckHuffmanF() {
+        testMainWithFile("./data/schmuckF.txt", "Huffman");
+    }
 
     @Test
     void testMainWithSchmuckHuffmanE() {

@@ -125,7 +125,7 @@ public class UnequalCostPrefixFreeCode {
 
         Map<SIG, Integer> optimalCosts = new HashMap<>();
         SIG initialSIG = new SIG(0, Arrays.copyOf(depths, depths.length), null, 1, 0);
-        adjustSIG(initialSIG, n);
+        adjustSIG(initialSIG, n, 0);
 
         optimalCosts.put(initialSIG, (int) 0);
         PriorityQueue<SIG> queue = new PriorityQueue<>(new SignatureComparator());
@@ -153,9 +153,16 @@ public class UnequalCostPrefixFreeCode {
                 }
 
                 SIG newSIG = new SIG(newM, newLevels, currentSIG, q, newCost);
-                while (adjustSIG(newSIG, n));
+                int killtLeafs = 0;
+                while (true){
+                    int last = killtLeafs;
+                    killtLeafs = adjustSIG(newSIG, n, killtLeafs);
+                    if (killtLeafs == last){
+                        break;
+                    }
+                };
 
-                if (newCost < optimalCosts.getOrDefault(newSIG, Integer.MAX_VALUE) && calculateSum(newSIG.getM(), newSIG.getLevels()) <= n && isValidExpansion(q, newSIG.getLevels(), currentSIG.getLevels())) {
+                if (newCost < optimalCosts.getOrDefault(newSIG, Integer.MAX_VALUE) && calculateSum(newSIG.getM(), newSIG.getLevels()) <= n && isValidExpansion(q, newSIG.getLevels(), currentSIG.getLevels(), killtLeafs)) {
                     optimalCosts.put(newSIG, newCost);
                     queue.add(newSIG);
                 }
@@ -181,12 +188,12 @@ public class UnequalCostPrefixFreeCode {
         return m + Arrays.stream(levels).sum();
     }
 
-    private static boolean isValidExpansion(int q, int[] newLevels, int[] oldLevels ) {
-        int addedLeaves = Arrays.stream(newLevels).sum() - Arrays.stream(oldLevels, 1, oldLevels.length).sum();
+    private static boolean isValidExpansion(int q, int[] newLevels, int[] oldLevels, int killtLeafs) {
+        int addedLeaves = Arrays.stream(newLevels).sum() - (Arrays.stream(oldLevels, 1, oldLevels.length).sum() - killtLeafs);
         return q == 0 || (q * 2 <= addedLeaves);
     }
 
-    private static boolean adjustSIG(SIG sig, int n) {
+    private static int adjustSIG(SIG sig, int n, int killtLeafs) {
         int oldm = sig.getM();
         int m = oldm;
         int[] levels = sig.getLevels();
@@ -199,6 +206,7 @@ public class UnequalCostPrefixFreeCode {
         for (int i = 0; i < levels.length; i++) {
             int allowed = n - sum;
             if (levels[i] > allowed) {
+                killtLeafs += levels[i]-allowed;
                 levels[i] = allowed;
             }
             sum += levels[i];
@@ -206,11 +214,7 @@ public class UnequalCostPrefixFreeCode {
 
         sig.m = m;
         sig.levels = levels;
-        if (m != oldm){
-            return true;
-        } else{
-            return false;
-        }
+        return killtLeafs;
     }
 
     private static int calculateCost(int[] probabilities, int m, int firstLevel, int n) {
