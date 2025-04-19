@@ -20,7 +20,16 @@ public class Schmucknachrichten {
         }
 
         // Read message
-        char[] message = FileReaderx.readToContinuousCharArray(dateipfad, 2, -1);
+        char[] message = FileReaderx.readToContinuousCharArray(dateipfad, 2, 2);
+
+        // Read Length request
+        int lengthRequest = 0;
+        try {
+            lengthRequest = FileReaderx.readLineToInt(dateipfad, 3);
+        } catch (Exception e) {
+            System.err.println("Error reading length request: " + e.getMessage());
+        }
+        
 
         // Create code map
         Map<Character, String> codeMap = new HashMap<>();
@@ -31,16 +40,15 @@ public class Schmucknachrichten {
         } 
 
         // Encode message
-        StringBuilder messageCodeBuilder = new StringBuilder();
-        for (char c : message) {
-            messageCodeBuilder.append(codeMap.get(c));
-        }
-        String messageCode = messageCodeBuilder.toString();
+        String messageCode = encodeMessage(message, codeMap);
 
         // Calculate the length of the encoded message
-        int messageLength = 0;
-        for (char m : messageCode.toCharArray()) {
-            messageLength += pearlTypeMap.get(Integer.parseInt(Character.toString(m)));
+        int messageLength = calculateEncodedMessageLength(messageCode, pearlTypeMap);
+
+        if (lengthRequest != 0){
+            adjusMessageLength(lengthRequest, pearlTypeMap, codeMap, messageLength, message);
+            messageCode = encodeMessage(message, codeMap);
+            messageLength = calculateEncodedMessageLength(messageCode, pearlTypeMap);
         }
 
         // Verify properties of the encoding
@@ -80,7 +88,7 @@ public class Schmucknachrichten {
         System.out.println("Is of appropriate Length: " + isOfAppropriateLength);
         System.out.println("Is prefix-free: " + isPrefixFree);
         System.out.println("Encoding is Accurate: " + isMessageEncodingAccurate);
-        System.out.println("Note: The output is also written to a file where the encoding works better, including the UTF-8 codes in plain text as an extra precaution.");
+        System.out.println("Note: The output is also written to a file where the encoding works better, including the Unicode codes in plain text as an extra precaution.");
 
         System.out.println("====================================");
 
@@ -246,6 +254,56 @@ public class Schmucknachrichten {
             }
         }
         return null;
+    }
+
+    private static void adjusMessageLength(int lengthRequest, HashMap<Integer, Integer> pearlTypeMap, Map<Character, String> codeMap, int messageLength, char[] message) {
+        if (lengthRequest - messageLength > 0){
+
+            int smallestPerl = Integer.MAX_VALUE;
+            for (int p : pearlTypeMap.keySet()){
+                if (pearlTypeMap.get(p) < smallestPerl){
+                    smallestPerl = pearlTypeMap.get(p);
+                }
+            }
+
+            char[] alphabet = UnequalCostPrefixFreeCode.extractAlphabet(message);
+            int[] frequencies = UnequalCostPrefixFreeCode.calculateFrequencies(message);
+            char leastFrequentCaracter = alphabet[0]; 
+            int frequencie_leastFrequentCaracter = Integer.MAX_VALUE;
+            for (int i = 0; i < alphabet.length; i++){
+                if (frequencies[i] < frequencie_leastFrequentCaracter){
+                    frequencie_leastFrequentCaracter = frequencies[i];
+                    leastFrequentCaracter = alphabet[i];
+                }
+            }
+
+            int toAddPerls = (lengthRequest - messageLength) / (pearlTypeMap.get(smallestPerl) * frequencie_leastFrequentCaracter);
+
+            String toAddCodePart = "";
+
+            for (int i = 0; i < toAddPerls; i++){
+                toAddCodePart = toAddCodePart + Integer.toString(smallestPerl);
+            }
+
+            codeMap.replace(leastFrequentCaracter, codeMap.get(leastFrequentCaracter) + toAddCodePart);
+        }
+    }
+
+    public static String encodeMessage(char[] message, Map<Character, String> codeMap) {
+        StringBuilder messageCodeBuilder = new StringBuilder();
+        for (char c : message) {
+            messageCodeBuilder.append(codeMap.get(c)); 
+        }
+        return messageCodeBuilder.toString();
+    }
+
+    public static int calculateEncodedMessageLength(String encodedMessage, Map<Integer, Integer> pearlTypeMap) {
+        int messageLength = 0;
+        for (char m : encodedMessage.toCharArray()) {
+            int pearlType = Integer.parseInt(Character.toString(m));
+            messageLength += pearlTypeMap.getOrDefault(pearlType, 0);
+        }
+        return messageLength;
     }
 }
 

@@ -3,7 +3,7 @@ import java.util.*;
 public class UnequalCostPrefixFreeCode {
     static Map<Character, String> encodeMap;
 
-    private static int[] calculateFrequencies(char[] message) {
+    public static int[] calculateFrequencies(char[] message) {
         Map<Character, Integer> frequencyMap = new HashMap<>();
         for (char c : message) {
             frequencyMap.put(c, frequencyMap.getOrDefault(c, 0) + 1);
@@ -19,7 +19,7 @@ public class UnequalCostPrefixFreeCode {
         return frequencies;
     }
 
-    private static char[] extractAlphabet(char[] message) {
+    public static char[] extractAlphabet(char[] message) {
         Set<Character> uniqueChars = new HashSet<>();
         for (char c : message) {
             uniqueChars.add(c);
