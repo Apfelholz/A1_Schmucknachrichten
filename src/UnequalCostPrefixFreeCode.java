@@ -1,7 +1,6 @@
 import java.util.*;
 
 public class UnequalCostPrefixFreeCode {
-    static Map<Character, String> encodeMap;
 
     public static int[] calculateFrequencies(char[] message) {
         Map<Character, Integer> frequencyMap = new HashMap<>();
@@ -43,7 +42,7 @@ public class UnequalCostPrefixFreeCode {
         return depths;
     }
 
-    private static void sortSymbolsByProbability(int[] probabilities, char[] symbols) {
+    private static void sortSymbolsByFrequence(int[] probabilities, char[] symbols) {
         List<Map.Entry<Character, Integer>> pairs = new ArrayList<>();
         for (int i = 0; i < probabilities.length; i++) {
             pairs.add(new AbstractMap.SimpleEntry<>(symbols[i], probabilities[i]));
@@ -116,19 +115,20 @@ public class UnequalCostPrefixFreeCode {
     }
 
     public static Map<Character, String> findOptimalPrefixFreeCode(char[] message, int[] costs) {
-        int[] probabilities = calculateFrequencies(message);
+        int[] frequence = calculateFrequencies(message);
         char[] symbols = extractAlphabet(message);
-        sortSymbolsByProbability(probabilities, symbols);
+        sortSymbolsByFrequence(frequence, symbols);
 
-        int n = probabilities.length;
+        int n = frequence.length;
         int[] depths = calculateDepths(costs);
 
         Map<SIG, Integer> optimalCosts = new HashMap<>();
+        PriorityQueue<SIG> queue = new PriorityQueue<>(new SignatureComparator());
+
         SIG initialSIG = new SIG(0, Arrays.copyOf(depths, depths.length), null, 1, 0);
-        adjustSIG(initialSIG, n, 0);
+        reduce(initialSIG, n, 0);
 
         optimalCosts.put(initialSIG, (int) 0);
-        PriorityQueue<SIG> queue = new PriorityQueue<>(new SignatureComparator());
         queue.add(initialSIG);
 
         SIG perfectSIG = null;
@@ -138,7 +138,7 @@ public class UnequalCostPrefixFreeCode {
             int currentM = currentSIG.getM();
             int firstLevel = currentSIG.getLevels()[0];
             
-            int cost = calculateCost(probabilities, currentM, firstLevel, n);
+            int cost = calculateCost(frequence, currentM, firstLevel, n);
             int newCost = currentSIG.cost + cost;
 
             for (int q = 0; q <= firstLevel; q++) {
@@ -156,7 +156,7 @@ public class UnequalCostPrefixFreeCode {
                 int killtLeafs = 0;
                 while (true){
                     int last = killtLeafs;
-                    killtLeafs = adjustSIG(newSIG, n, killtLeafs);
+                    killtLeafs = reduce(newSIG, n, killtLeafs);
                     if (killtLeafs == last){
                         break;
                     }
@@ -185,7 +185,7 @@ public class UnequalCostPrefixFreeCode {
         return q == 0 || (q * 2 <= addedLeaves);
     }
 
-    private static int adjustSIG(SIG sig, int n, int killtLeafs) {
+    private static int reduce(SIG sig, int n, int killtLeafs) {
         int oldm = sig.getM();
         int m = oldm;
         int[] levels = sig.getLevels();
