@@ -131,7 +131,7 @@ public class UnequalCostPrefixFreeCode {
         PriorityQueue<SIG> queue = new PriorityQueue<>(new SignatureComparator());
         queue.add(initialSIG);
 
-        List<SIG> perfectSIGs = new ArrayList<>();
+        SIG perfectSIG = null;
 
         while (!queue.isEmpty()) {
             SIG currentSIG = queue.poll();
@@ -165,23 +165,15 @@ public class UnequalCostPrefixFreeCode {
                 if (newCost < optimalCosts.getOrDefault(newSIG, Integer.MAX_VALUE) && calculateSum(newSIG.getM(), newSIG.getLevels()) <= n && isValidExpansion(q, newSIG.getLevels(), currentSIG.getLevels(), killtLeafs)) {
                     optimalCosts.put(newSIG, newCost);
                     queue.add(newSIG);
-                }
-
-                if (calculateSum(newSIG.getM(), newSIG.getLevels()) == n && newSIG.getM() == n) {
-                    perfectSIGs.add(newSIG);
+                    if (calculateSum(newSIG.getM(), newSIG.getLevels()) == n && newSIG.getM() == n) {
+                        perfectSIG = newSIG;
+                        break;
+                    }
                 }
             }
         }
 
-        int minCost = Integer.MAX_VALUE;
-        for (SIG sig : perfectSIGs) {
-            int cost =  calculateMessageCost(message, costs, symbols, sig, minCost);
-            if (cost < minCost){
-                minCost = cost;
-            }
-        }
-
-        return encodeMap;
+        return generateCodeMap(perfectSIG, costs, symbols);
     }
 
     private static int calculateSum(int m, int[] levels) {
@@ -223,30 +215,5 @@ public class UnequalCostPrefixFreeCode {
             cost += probabilities[t-1];
         }
         return cost;
-    }
-
-    private static int calculateMessageCost(char[] message, int[] costs, char[] symbols, SIG sig, int minCost) {
-        Map<Character, String> codeMap = generateCodeMap(sig, costs, symbols);
-        Map<Integer, Integer> costMap = new HashMap<>();
-
-        for (int i = 0; i < costs.length; i++) {
-            costMap.put(i, costs[i]);
-        }
-
-        StringBuilder encodedMessage = new StringBuilder();
-        for (char c : message) {
-            encodedMessage.append(codeMap.get(c));
-        }
-
-        int totalCost = 0;
-        for (char c : encodedMessage.toString().toCharArray()) {
-            totalCost += costMap.get(Character.getNumericValue(c));
-        }
-
-        if (minCost > totalCost) {
-            encodeMap = codeMap;
-        }
-
-        return totalCost;
     }
 }
