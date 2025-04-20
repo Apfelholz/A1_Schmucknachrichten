@@ -8,7 +8,12 @@ public class Schmucknachrichten {
     public static void main(String[] args) throws Exception {
         // Input parameters
         String dateipfad = args[0];
-        String method = args[1];
+        String method;
+        if (args.length > 1){
+            method = args[1];
+        }else{
+            method = "SIG";
+        }
 
         // Read pearl types and their lengths
         int numberOfDifferentPearlTypes = FileReaderx.readLineToInt(dateipfad, 0);
