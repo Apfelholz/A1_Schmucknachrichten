@@ -284,6 +284,10 @@ public class Schmucknachrichten {
 
             int toAddPerls = (lengthRequest - messageLength) / (pearlTypeMap.get(smallestPerl) * frequencie_leastFrequentCaracter);
 
+            if ((lengthRequest - messageLength) % (pearlTypeMap.get(smallestPerl) * frequencie_leastFrequentCaracter) > (smallestPerl/2)){
+                toAddPerls++;
+            }
+
             String toAddCodePart = "";
 
             for (int i = 0; i < toAddPerls; i++){
