@@ -284,17 +284,15 @@ public class Schmucknachrichten {
 
             int toAddPerls = (lengthRequest - messageLength) / (pearlTypeMap.get(smallestPerl) * frequencie_leastFrequentCaracter);
 
-            if ((lengthRequest - messageLength) % (pearlTypeMap.get(smallestPerl) * frequencie_leastFrequentCaracter) > (smallestPerl/2)){
+            if ((lengthRequest - messageLength) % (pearlTypeMap.get(smallestPerl) * frequencie_leastFrequentCaracter) > (pearlTypeMap.get(smallestPerl) * frequencie_leastFrequentCaracter/2)){
                 toAddPerls++;
             }
 
-            String toAddCodePart = "";
-
+            StringBuilder toAddCodePart = new StringBuilder();
             for (int i = 0; i < toAddPerls; i++){
-                toAddCodePart = toAddCodePart + Integer.toString(smallestPerl);
+                toAddCodePart.append(smallestPerl);
             }
-
-            codeMap.replace(leastFrequentCaracter, codeMap.get(leastFrequentCaracter) + toAddCodePart);
+            codeMap.replace(leastFrequentCaracter, codeMap.get(leastFrequentCaracter) + toAddCodePart.toString());
         }
     }
 
