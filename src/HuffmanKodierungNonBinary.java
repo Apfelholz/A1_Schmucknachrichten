@@ -14,7 +14,7 @@ public class HuffmanKodierungNonBinary{
         }
 
         for (char c : frequencyMap.keySet()) {
-            X.add(new HuffmanNodeNonBinary(c, frequencyMap.get(c), numberOfDifferentPearlTypes));
+            X.add(new HuffmanNodeNonBinary(c, frequencyMap.get(c), numberOfDifferentPearlTypes, 0));
         }
 
         return X;
@@ -33,22 +33,22 @@ public class HuffmanKodierungNonBinary{
                 childNodes[i] = X.poll();
                 newFrequency += childNodes[i].frequency;
             }
-            HuffmanNodeNonBinary neu = new HuffmanNodeNonBinary('$',newFrequency, numberOfDifferentPearlTypes);
+            HuffmanNodeNonBinary neu = new HuffmanNodeNonBinary( '\u0000' ,newFrequency, numberOfDifferentPearlTypes, 1);
             neu.childNodes = childNodes;
             X.add(neu);
         }
 
         HuffmanNodeNonBinary root = X.poll();
-        root.data = '*';
+        root.position = 2;
         getcodes(root);
 
         return codeMap;
     }
 
     private static void getcodes(HuffmanNodeNonBinary node){
-        if(node.data != '$' && node.data != '*'){
+        if(node.position == 0){
             codeMap.put(node.data, node.code);
-        } else if(node.data == '*'){
+        } else if(node.position == 2){
             int i = 0;
             for(HuffmanNodeNonBinary c : node.childNodes){
                 if(c != null){
@@ -57,7 +57,7 @@ public class HuffmanKodierungNonBinary{
                 }
                 i++;
             }        
-        } else if(node.data == '$'){
+        } else if(node.position == 1){
             int i = 0;
             for(HuffmanNodeNonBinary c : node.childNodes){
                 if(c != null){
