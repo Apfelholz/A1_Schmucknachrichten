@@ -66,7 +66,7 @@ public class Schmucknachrichten {
         String shortenedPearlTypeMap = pearlTypeMap.toString().length() > 100 ? pearlTypeMap.toString().substring(0, 100) + "..." : pearlTypeMap.toString();
         String codeMapRepresentation = codeMap.toString().length() > 100 ? codeMap.toString().substring(0, 100) + "..." : codeMap.toString();
 
-        FileLogger fileLogger = new FileLogger("output\\output_" + method + "_" + dateipfad.substring(14, 16) + ".txt");
+        FileLogger fileLogger = new FileLogger("output_" + method + "_" + dateipfad.substring(14, 16) + ".txt");
 
         System.out.println("====================================");
         System.out.println("Results for file: " + dateipfad);
