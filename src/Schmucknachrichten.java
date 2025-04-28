@@ -32,7 +32,6 @@ public class Schmucknachrichten {
         try {
             lengthRequest = FileReaderx.readLineToInt(dateipfad, 3);
         } catch (Exception e) {
-            System.err.println("Error reading length request: " + e.getMessage());
         }
         
 

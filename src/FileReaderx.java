@@ -96,8 +96,6 @@ public class FileReaderx {
             e.printStackTrace();
             System.err.println("Reading failed.");
         } catch (NumberFormatException e) {
-            e.printStackTrace();
-            System.err.println("Conversion to integer failed.");
         }
         
         return number;
